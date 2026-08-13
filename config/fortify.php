@@ -143,14 +143,22 @@ return [
     |
     */
 
-    'features' => [
-        Features::registration(),
+    'features' => env('APP_ENV') === 'production' ? [
         Features::resetPasswords(),
         Features::emailVerification(),
         Features::twoFactorAuthentication([
             'confirm' => true,
             'confirmPassword' => true,
             // 'window' => 0
+        ]),
+    ] : [
+        Features::registration(),
+        Features::resetPasswords(),
+        // TODO: Eliminar emailVerification y twoFactorAuthentication cuando se trabaja en entorno de desarrollo
+        Features::emailVerification(),
+        Features::twoFactorAuthentication([
+            'confirm' => true,
+            'confirmPassword' => true,
         ]),
     ],
 

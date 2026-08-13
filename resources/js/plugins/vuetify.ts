@@ -21,7 +21,7 @@ const getStoredAppearance = (): Appearance => {
 };
 
 export default createVuetify({
-    ssr: true,
+    ssr: false,
     defaults: {
         VBtn: {
             rounded: 'sm',
