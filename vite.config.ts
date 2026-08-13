@@ -13,7 +13,7 @@ export default defineConfig({
     // },
     plugins: [
         laravel({
-            input: ['resources/scss/app.scss', 'resources/js/app.ts'],
+            input: ['resources/js/app.ts'],
             refresh: true,
             fonts: [
                 bunny('Instrument Sans', {
@@ -37,6 +37,7 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': fileURLToPath(new URL('./resources/js', import.meta.url)),
+            '@scss': fileURLToPath(new URL('./resources/scss', import.meta.url)),
         },
     },
 });
