@@ -40,7 +40,14 @@ class RoleController extends Controller
      */
     public function create()
     {
-        //
+        $permissions = Permission::select('id', 'name')
+            ->orderBy('name', 'asc')
+            ->get();
+
+        return Inertia::render('Roles/Form', [
+            'create' => true,
+            'permissions' => $permissions
+        ]);
     }
 
     /**
@@ -62,9 +69,24 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Role $role)
     {
-        //
+        $permissions = Permission::select('id', 'name')
+            ->orderBy('name', 'asc')
+            ->get();
+
+        // cargar ids de los permisos que el rol ya tiene asignados
+        $role->load('permissions:id');
+
+        return Inertia::render('Roles/Form', [
+            'create' => false,
+            'role' => [
+                'id' => $role->id,
+                'name' => $role->name,
+                'permission_ids' => $role->permissions->pluck('id')->toArray(),
+            ],
+            'permissions' => $permissions
+        ]);
     }
 
     /**
