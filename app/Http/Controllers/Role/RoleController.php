@@ -127,8 +127,23 @@ class RoleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+   public function destroy(Role $role)
     {
-        //
+        try {
+            // Spatie guarda los usuarios asignados en la relación 'users'
+            if ($role->users()->exists()) {
+                return redirect()->back()
+                    ->with('error', 'No se puede eliminar el rol porque tiene usuarios asignados.');
+            }
+
+            $role->delete();
+
+            return to_route('roles.index')
+                ->with('success', 'Rol eliminado exitosamente.');
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Hubo un error al intentar eliminar el rol.');
+        }
     }
 }
