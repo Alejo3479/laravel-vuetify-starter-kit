@@ -103,6 +103,9 @@ watch(
             v-model="drawer"
             :rail="isMobile ? false : rail"
             class="app-sidebar"
+            color="surface"
+            :border="false"
+            elevation="0"
             :permanent="!isMobile"
             :temporary="isMobile"
             rail-width="72"
@@ -115,24 +118,21 @@ watch(
                 </Link>
             </template>
 
-            <div class="app-sidebar-section-label">Platform</div>
+            <v-list-subheader>Platform</v-list-subheader>
 
-            <nav class="app-sidebar-nav" aria-label="Platform">
-                <Link
-                    v-for="item in mainNavItems"
-                    :key="item.title"
-                    :href="item.href"
-                    class="app-sidebar-link"
-                    :class="{
-                        'app-sidebar-link-active': isCurrentUrl(item.href),
-                    }"
-                >
-                    <VIcon :icon="item.icon" size="20" />
-                    <span class="app-sidebar-link-label">
-                        {{ item.title }}
-                    </span>
-                </Link>
-            </nav>
+            <v-list nav density="compact" class="px-3">
+            <v-list-item
+                v-for="item in mainNavItems"
+                :key="item.title"
+                :href="toUrl(item.href)"
+                :prepend-icon="item.icon"
+                :active="isCurrentUrl(item.href)"
+                active-color="primary"
+                rounded="md"
+            >
+                {{ item.title }}
+            </v-list-item>
+            </v-list>
 
             <template #append>
                 <nav class="app-sidebar-footer" aria-label="Resources">

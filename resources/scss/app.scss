@@ -1,9 +1,9 @@
 @layer vuetify-core, vuetify-components, vuetify-overrides, vuetify-utilities, vuetify-final, app;
 
 @layer app {
-    html {
-        background: rgb(var(--v-theme-background));
-    }
+    // html {
+    //     background: rgb(var(--v-theme-background));
+    // }
 
     body {
         margin: 0;
@@ -15,63 +15,63 @@
         text-decoration: none;
     }
 
-    .app-page {
-        margin: 0;
-        max-width: none;
-        padding: 0;
-        width: 100%;
-    }
+    // .app-page {
+    //     margin: 0;
+    //     max-width: none;
+    //     padding: 0;
+    //     width: 100%;
+    // }
 
     .app-sidebar {
-        background: #fafafa !important;
-        border-right: none !important;
-        box-shadow: none !important;
-        color: rgba(var(--v-theme-on-background), 0.92);
+        // background: #fafafa !important;
+        // border-right: none !important;
+        // box-shadow: none !important;
+        // color: rgba(var(--v-theme-on-background), 0.92);
 
-        &.v-navigation-drawer--rail {
-            .app-sidebar-brand {
-                justify-content: center;
-                padding-inline: 0;
-            }
+        // &.v-navigation-drawer--rail {
+        //     .app-sidebar-brand {
+        //         justify-content: center;
+        //         padding-inline: 0;
+        //     }
 
-            .app-logo-text,
-            .app-sidebar-section-label {
-                display: none;
-            }
+        //     .app-logo-text,
+        //     .app-sidebar-section-label {
+        //         display: none;
+        //     }
 
-            .app-sidebar-nav,
-            .app-sidebar-footer {
-                padding-inline: 0;
-            }
+        //     .app-sidebar-nav,
+        //     .app-sidebar-footer {
+        //         padding-inline: 0;
+        //     }
 
-            .app-sidebar-link,
-            .app-sidebar-user {
-                height: 48px;
-                justify-content: center;
-                margin-inline: auto;
-                padding: 0;
-                width: 48px;
-            }
+        //     .app-sidebar-link,
+        //     .app-sidebar-user {
+        //         height: 48px;
+        //         justify-content: center;
+        //         margin-inline: auto;
+        //         padding: 0;
+        //         width: 48px;
+        //     }
 
-            .app-sidebar-link {
-                gap: 0;
-            }
+        //     .app-sidebar-link {
+        //         gap: 0;
+        //     }
 
-            .app-sidebar-link-label,
-            .app-sidebar-user-name,
-            .app-sidebar-user-chevron {
-                display: none;
-            }
+        //     .app-sidebar-link-label,
+        //     .app-sidebar-user-name,
+        //     .app-sidebar-user-chevron {
+        //         display: none;
+        //     }
 
-            .app-sidebar-footer {
-                gap: 8px;
-                padding-bottom: 8px;
-            }
+        //     .app-sidebar-footer {
+        //         gap: 8px;
+        //         padding-bottom: 8px;
+        //     }
 
-            .app-sidebar-user {
-                margin-bottom: 16px;
-            }
-        }
+        //     .app-sidebar-user {
+        //         margin-bottom: 16px;
+        //     }
+        // }
     }
 
     .v-theme--dark {
@@ -92,12 +92,12 @@
         padding: 24px 28px 28px;
     }
 
-    .app-sidebar-section-label {
-        color: rgba(var(--v-theme-on-background), 0.56);
-        font-size: 0.8125rem;
-        font-weight: 600;
-        margin: 0 28px 8px;
-    }
+    // .app-sidebar-section-label {
+    //     color: rgba(var(--v-theme-on-background), 0.56);
+    //     font-size: 0.8125rem;
+    //     font-weight: 600;
+    //     margin: 0 28px 8px;
+    // }
 
     .app-sidebar-nav,
     .app-sidebar-footer {

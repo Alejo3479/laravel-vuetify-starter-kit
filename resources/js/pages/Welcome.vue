@@ -41,7 +41,7 @@ withDefaults(
 
                 <VRow align="center" class="min-screen">
                     <VCol cols="12" md="6">
-                        <h1 class="text-h3 mb-4">Laravel Starter Kit</h1>
+                        <h1 class="text-h3 mb-4">Laravel Starter Kit 123</h1>
                         <p class="text-body-1 text-medium-emphasis mb-6">
                             A Laravel, Inertia, Vue, Fortify, Wayfinder, and
                             Vuetify foundation for building authenticated
