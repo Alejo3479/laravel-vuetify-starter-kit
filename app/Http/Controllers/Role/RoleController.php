@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Role;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Role\StoreRoleRequest;
+use App\Http\Requests\Role\UpdateRoleRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Permission;
@@ -53,9 +55,22 @@ class RoleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreRoleRequest $request)
     {
-        //
+         try {
+
+            $role = Role::create(['name' => trim($request->name)]);
+            if ($request->has('permissions')) {
+                $role->syncPermissions($request->permissions);
+            }
+            $message = sprintf('Rol "%s" creado exitosamente.', $role->name);
+            return to_route('roles.index')
+                ->with('success', $message);
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Hubo un error al intentar crear el rol.');
+        }
     }
 
     /**
@@ -92,9 +107,21 @@ class RoleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Role $role, UpdateRoleRequest $request)
     {
-        //
+        try {
+           
+
+            $role->update(['name' => $request->name]);
+            $role->syncPermissions($request->permissions ?? []);
+
+            return to_route('roles.index')
+                ->with('success', 'Rol actualizado exitosamente.');
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Hubo un error al actualizar el rol.');
+        }
     }
 
     /**
