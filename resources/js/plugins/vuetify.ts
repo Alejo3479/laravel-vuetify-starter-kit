@@ -3,6 +3,7 @@ import 'vuetify/styles';
 
 import { createVuetify } from 'vuetify';
 import type { Appearance } from '@/types';
+import { es, en } from 'vuetify/locale'
 
 const DEFAULT_APPEARANCE: Appearance = 'system';
 
@@ -22,6 +23,11 @@ const getStoredAppearance = (): Appearance => {
 
 export default createVuetify({
     ssr: false,
+    locale: {
+        locale: 'es',
+        fallback: 'en',
+        messages: { es, en },
+    },
     defaults: {
         VBtn: {
             rounded: 'sm',
