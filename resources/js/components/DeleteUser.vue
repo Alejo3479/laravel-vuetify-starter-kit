@@ -13,14 +13,14 @@ const passwordInput = useTemplateRef('passwordInput');
     <section class="settings-section">
         <Heading
             variant="small"
-            title="Delete account"
-            description="Delete your account and all of its resources"
+            title="Eliminar cuenta"
+            description="Elimina tu cuenta y todos sus recursos"
         />
 
         <VSheet class="delete-warning pa-5">
-            <h3 class="text-subtitle-1 font-weight-bold mb-1">Warning</h3>
+            <h3 class="text-subtitle-1 font-weight-bold mb-1">Precaución</h3>
             <p class="text-body-2 mb-5">
-                Please proceed with caution, this cannot be undone.
+                Por favor, procede con precaución, esto no se puede deshacer.
             </p>
             <VBtn
                 color="error"
@@ -28,7 +28,7 @@ const passwordInput = useTemplateRef('passwordInput');
                 data-test="delete-user-button"
                 @click="dialog = true"
             >
-                Delete account
+                Eliminar cuenta
             </VBtn>
         </VSheet>
     </section>
@@ -43,12 +43,10 @@ const passwordInput = useTemplateRef('passwordInput');
                 @success="dialog = false"
                 v-slot="{ errors, processing, reset, clearErrors }"
             >
-                <VCardTitle>Delete account?</VCardTitle>
+                <VCardTitle>¿Eliminar cuenta?</VCardTitle>
                 <VCardText>
                     <p class="text-body-2 text-medium-emphasis mb-4">
-                        Once your account is deleted, all of its resources and
-                        data will also be permanently deleted. Enter your
-                        password to confirm.
+                        Una vez que elimines tu cuenta, todos sus recursos y datos se eliminarán de forma permanente. Antes de eliminar tu cuenta, descarga cualquier dato o información que desees conservar.
                     </p>
 
                     <PasswordInput
@@ -56,7 +54,7 @@ const passwordInput = useTemplateRef('passwordInput');
                         ref="passwordInput"
                         name="password"
                         label="Password"
-                        placeholder="Password"
+                        placeholder="Contraseña"
                         :error-messages="errors.password"
                     />
                 </VCardText>

@@ -5,15 +5,15 @@ import { store } from '@/routes/password/confirm';
 
 defineOptions({
     layout: {
-        title: 'Confirm your password',
+        title: 'Confirmar contraseña',
         description:
-            'This is a secure area of the application. Please confirm your password before continuing.',
+            'Esta es un área restringida de la aplicación. Por favor, confirma tu contraseña antes de continuar.',
     },
 });
 </script>
 
 <template>
-    <Head title="Confirm password" />
+    <Head title="Confirmar contraseña" />
 
     <Form
         v-bind="store.form()"
@@ -21,7 +21,7 @@ defineOptions({
         v-slot="{ errors, processing }"
     >
         <div class="starter-field mb-6">
-            <label for="password">Password</label>
+            <label for="password">Contraseña</label>
             <PasswordInput
                 id="password"
                 name="password"
@@ -44,7 +44,7 @@ defineOptions({
             :disabled="processing"
             data-test="confirm-password-button"
         >
-            Confirm password
+            Confirmar contraseña
         </VBtn>
     </Form>
 </template>

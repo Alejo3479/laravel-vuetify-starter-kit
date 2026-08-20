@@ -9,15 +9,15 @@ import type { NavItem } from '@/types';
 
 const sidebarNavItems: NavItem[] = [
     {
-        title: 'Profile',
+        title: 'Perfil',
         href: editProfile(),
     },
     {
-        title: 'Security',
+        title: 'Seguridad',
         href: editSecurity(),
     },
     {
-        title: 'Appearance',
+        title: 'Apariencia',
         href: editAppearance(),
     },
 ];
@@ -28,12 +28,12 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
 <template>
     <div class="app-page settings-layout">
         <Heading
-            title="Settings"
-            description="Manage your profile and account settings"
+            title="Ajustes"
+            description="Administra tu perfil, seguridad y apariencia de la aplicación"
         />
 
         <div class="settings-grid">
-            <nav aria-label="Settings">
+            <nav aria-label="Ajustes">
                 <VList class="settings-nav" nav density="compact">
                     <Link
                         v-for="item in sidebarNavItems"

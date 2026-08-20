@@ -18,7 +18,7 @@ defineOptions({
     layout: {
         breadcrumbs: [
             {
-                title: 'Profile settings',
+                title: 'Ajustes del perfil',
                 href: edit(),
             },
         ],
@@ -32,13 +32,13 @@ const email = ref(user.value.email);
 </script>
 
 <template>
-    <Head title="Profile settings" />
+    <Head title="Ajustes del perfil" />
 
     <section class="settings-section">
         <Heading
             variant="small"
-            title="Profile information"
-            description="Update your name and email address"
+            title="Información del perfil"
+            description="Actualiza tu nombre de usuario y dirección de correo electrónico"
         />
 
         <Form
@@ -46,7 +46,7 @@ const email = ref(user.value.email);
             v-slot="{ errors, processing }"
         >
             <div class="starter-field mb-4">
-                <label for="name">Name</label>
+                <label for="name">Nombre</label>
                 <VTextField
                     id="name"
                     v-model="name"
@@ -61,7 +61,7 @@ const email = ref(user.value.email);
             </div>
 
             <div class="starter-field mb-6">
-                <label for="email">Email address</label>
+                <label for="email">Email</label>
                 <VTextField
                     id="email"
                     v-model="email"
@@ -82,13 +82,13 @@ const email = ref(user.value.email);
                 variant="tonal"
                 class="mb-4"
             >
-                Your email address is unverified.
+                Tu dirección de email no está verificada.
                 <Link :href="send()" as="button" class="text-primary">
-                    Click here to resend the verification email.
+                    Haz clic aquí para reenviar el email de verificación.
                 </Link>
 
                 <div v-if="status === 'verification-link-sent'" class="mt-2">
-                    A new verification link has been sent to your email address.
+                    Se ha enviado un nuevo enlace de verificación a tu dirección de email.
                 </div>
             </VAlert>
 
@@ -99,7 +99,7 @@ const email = ref(user.value.email);
                 :disabled="processing"
                 data-test="update-profile-button"
             >
-                Save
+                Guardar
             </VBtn>
         </Form>
     </section>

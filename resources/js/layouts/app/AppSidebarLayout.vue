@@ -51,22 +51,6 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/akfaiz/laravel-vuetify-starter-kit',
-        icon: 'mdi-source-repository',
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: 'mdi-book-open-page-variant-outline',
-    },
-];
-
-const toUrl = (href: NavItem['href']): string =>
-    typeof href === 'string' ? href : href.url;
-
 const handleLogout = (): void => {
     router.flushAll();
 };
@@ -135,22 +119,6 @@ watch(
             </nav>
 
             <template #append>
-                <nav class="app-sidebar-footer" aria-label="Resources">
-                    <a
-                        v-for="item in footerNavItems"
-                        :key="item.title"
-                        :href="toUrl(item.href)"
-                        class="app-sidebar-link"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <VIcon :icon="item.icon" size="20" />
-                        <span class="app-sidebar-link-label">
-                            {{ item.title }}
-                        </span>
-                    </a>
-                </nav>
-
                 <VMenu location="top end">
                     <template #activator="{ props: menuProps }">
                         <button
@@ -218,7 +186,7 @@ watch(
                             >
                                 <VListItem
                                     prepend-icon="mdi-cog-outline"
-                                    title="Settings"
+                                    title="Ajustes"
                                 />
                             </Link>
                             <Link
@@ -230,7 +198,7 @@ watch(
                             >
                                 <VListItem
                                     prepend-icon="mdi-logout"
-                                    title="Log out"
+                                    title="Salir"
                                 />
                             </Link>
                         </VList>

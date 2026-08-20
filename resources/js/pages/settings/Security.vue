@@ -45,8 +45,8 @@ onUnmounted(() => clearTwoFactorAuthData());
     <section class="settings-section">
         <Heading
             variant="small"
-            title="Update password"
-            description="Ensure your account is using a long, random password to stay secure"
+            title="Cambiar contraseña"
+            description="Asegúrese de que su cuenta esté usando una contraseña segura"
         />
 
         <Form
@@ -61,7 +61,7 @@ onUnmounted(() => clearTwoFactorAuthData());
             v-slot="{ errors, processing }"
         >
             <div class="starter-field mb-4">
-                <label for="current_password">Current password</label>
+                <label for="current_password">Contraseña actual</label>
                 <PasswordInput
                     id="current_password"
                     name="current_password"
@@ -74,7 +74,7 @@ onUnmounted(() => clearTwoFactorAuthData());
             </div>
 
             <div class="starter-field mb-4">
-                <label for="password">New password</label>
+                <label for="password">Nueva contraseña</label>
                 <PasswordInput
                     id="password"
                     name="password"
@@ -87,7 +87,7 @@ onUnmounted(() => clearTwoFactorAuthData());
             </div>
 
             <div class="starter-field mb-6">
-                <label for="password_confirmation">Confirm password</label>
+                <label for="password_confirmation">Confirmar contraseña</label>
                 <PasswordInput
                     id="password_confirmation"
                     name="password_confirmation"
@@ -106,7 +106,7 @@ onUnmounted(() => clearTwoFactorAuthData());
                 :disabled="processing"
                 data-test="update-password-button"
             >
-                Save password
+                Guardar contraseña
             </VBtn>
         </Form>
     </section>
@@ -114,15 +114,13 @@ onUnmounted(() => clearTwoFactorAuthData());
     <section v-if="canManageTwoFactor" class="settings-section">
         <Heading
             variant="small"
-            title="Two-factor authentication"
-            description="Manage your two-factor authentication settings"
+            title="Autenticación de dos factores"
+            description="Gestione sus configuraciones de autenticación de doble factor"
         />
 
         <template v-if="!twoFactorEnabled">
             <p class="text-body-2 text-medium-emphasis mb-4">
-                When you enable two-factor authentication, you will be prompted
-                for a secure pin during login. This pin can be retrieved from a
-                TOTP-supported application on your phone.
+                Cuando habilite la autenticación de dos factores, se le pedirá un pin seguro durante el inicio de sesión. Este pin puede ser recuperado desde una aplicación compatible con TOTP en su teléfono.
             </p>
 
             <VBtn
@@ -131,7 +129,7 @@ onUnmounted(() => clearTwoFactorAuthData());
                 color="primary"
                 @click="showSetupModal = true"
             >
-                Continue setup
+                Proceder
             </VBtn>
             <Form
                 v-else
@@ -145,16 +143,14 @@ onUnmounted(() => clearTwoFactorAuthData());
                     :loading="processing"
                     :disabled="processing"
                 >
-                    Enable 2FA
+                    Habilitar 2FA
                 </VBtn>
             </Form>
         </template>
 
         <template v-else>
             <p class="text-body-2 text-medium-emphasis mb-4">
-                You will be prompted for a secure, random pin during login,
-                which you can retrieve from the TOTP-supported application on
-                your phone.
+                Se le pedirá un pin seguro durante el inicio de sesión, puede recuperar el pin desde una aplicación compatible con TOTP en su teléfono.
             </p>
 
             <Form v-bind="disable.form()" #default="{ processing }">
@@ -165,7 +161,7 @@ onUnmounted(() => clearTwoFactorAuthData());
                     :loading="processing"
                     :disabled="processing"
                 >
-                    Disable 2FA
+                    Desactivar 2FA
                 </VBtn>
             </Form>
 

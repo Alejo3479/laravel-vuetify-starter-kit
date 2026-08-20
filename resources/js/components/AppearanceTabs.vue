@@ -4,9 +4,9 @@ import { useAppearance } from '@/composables/useAppearance';
 const { appearance, updateAppearance } = useAppearance();
 
 const tabs = [
-    { value: 'light', icon: 'mdi-white-balance-sunny', label: 'Light' },
-    { value: 'dark', icon: 'mdi-weather-night', label: 'Dark' },
-    { value: 'system', icon: 'mdi-monitor', label: 'System' },
+    { value: 'light', icon: 'mdi-white-balance-sunny', label: 'Claro' },
+    { value: 'dark', icon: 'mdi-weather-night', label: 'Oscuro' },
+    { value: 'system', icon: 'mdi-monitor', label: 'Sistema' },
 ] as const;
 </script>
 
