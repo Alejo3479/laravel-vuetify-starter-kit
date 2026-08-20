@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
-import { index as rolesIndex, edit, show } from '@/routes/roles';
+import { index as rolesIndex, edit, show, destroy } from '@/routes/roles';
 
 defineOptions({
     layout: {
@@ -87,6 +87,20 @@ const askDelete = (role: RoleRow) => {
     confirmDialog.value = true;
 };
 
+const confirmDelete = () => {
+    if (!roleToDelete.value) {
+        return;
+    }
+
+    router.delete(destroy(roleToDelete.value.id).url, {
+        preserveScroll: true,
+        onFinish: () => {
+            confirmDialog.value = false;
+            roleToDelete.value = null;
+        },
+    });
+};
+
 watch(search, (value) => {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(() => {
@@ -169,7 +183,7 @@ watch(search, (value) => {
                             <VCardActions>
                                 <VSpacer />
                                 <VBtn variant="text" @click="confirmDialog = false">Cancelar</VBtn>
-                                <VBtn color="error" variant="flat">Eliminar</VBtn>
+                                <VBtn color="error" variant="flat" @click="confirmDelete">Eliminar</VBtn>
                             </VCardActions>
                         </VCard>
                     </VDialog>
