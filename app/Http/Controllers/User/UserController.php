@@ -66,12 +66,12 @@ class UserController extends Controller
                 $user->assignRole($request->roles);
             }
             $message = sprintf('Usuario "%s" registrado exitosamente.', $user->name);
-            return to_route('users.index')
-                ->with('success', $message);
+            Inertia::flash('toast', ['type' => 'success', 'message' => $message]);
+            return to_route('users.index');
 
         } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Hubo un error al intentar crear el usuario.');
+            Inertia::flash('toast', ['type' => 'error', 'message' => 'Hubo un error al intentar crear el usuario.']);
+            return redirect()->back();
         }
     }
 
@@ -134,12 +134,13 @@ class UserController extends Controller
             $user->update($data);
             $user->syncRoles($request->input('roles', []));
             $message = sprintf('Usuario "%s" actualizado exitosamente.', $user->name);
-            return to_route('users.index')
-                ->with('success', $message);
+
+            Inertia::flash('toast', ['type' => 'success', 'message' => $message]);
+            return to_route('users.index');
 
         } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Hubo un error al actualizar el usuario.');
+            Inertia::flash('toast', ['type' => 'error', 'message' =>  'Hubo un error al actualizar el usuario.']);
+            return redirect()->back();
         }
     }
 
@@ -150,18 +151,18 @@ class UserController extends Controller
     {
         try {
             if ($user->id === Auth::id()) {
-                return redirect()->back()
-                    ->with('error', 'No puedes eliminar tu propia cuenta de usuario.');
+                Inertia::flash('toast', ['type' => 'error','message' => 'No puedes eliminar tu propia cuenta de usuario.']);
+                return redirect()->back();
             }
             $userName = $user->name;
             $user->delete();
             $message = sprintf('Usuario "%s" eliminado exitosamente.', $userName);
-            return to_route('users.index')
-                ->with('success', $message);
+            Inertia::flash('toast', ['type' => 'success','message' => $message]);
+            return to_route('users.index');
 
         } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Hubo un error al intentar eliminar el usuario.');
+            Inertia::flash('toast', ['type' => 'error','message' => 'Hubo un error al intentar eliminar el usuario.']);
+            return redirect()->back();
         }
     }
 }
