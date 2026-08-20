@@ -64,12 +64,12 @@ class RoleController extends Controller
                 $role->syncPermissions($request->permissions);
             }
             $message = sprintf('Rol "%s" creado exitosamente.', $role->name);
-            return to_route('roles.index')
-                ->with('success', $message);
+            Inertia::flash('toast', ['type' => 'success','message' => $message]);
+            return to_route('roles.index');
 
         } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Hubo un error al intentar crear el rol.');
+            Inertia::flash('toast', ['type' => 'error','message' => 'Hubo un error al intentar crear el rol.']);
+            return redirect()->back();
         }
     }
 
@@ -129,14 +129,13 @@ class RoleController extends Controller
 
             $role->update(['name' => $request->name]);
             $role->syncPermissions($request->permissions ?? []);
-
-            return to_route('roles.index')
-                ->with('success', 'Rol actualizado exitosamente.');
+            Inertia::flash('toast', ['type' => 'success','message' => 'Rol actualizado exitosamente.']);
+            return to_route('roles.index');
 
         } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Hubo un error al actualizar el rol.');
-        }
+            Inertia::flash('toast', ['type' => 'error','message' => 'Hubo un error al actualizar el rol.']);    
+            return redirect()->back();
+        }   
     }
 
     /**
@@ -147,18 +146,18 @@ class RoleController extends Controller
         try {
             // Spatie guarda los usuarios asignados en la relación 'users'
             if ($role->users()->exists()) {
-                return redirect()->back()
-                    ->with('error', 'No se puede eliminar el rol porque tiene usuarios asignados.');
+                Inertia::flash('toast', ['type' => 'error','message' => 'No se puede eliminar el rol porque tiene usuarios asignados.']);
+                return redirect()->back();
             }
-
+            $roleName = $role->name;
             $role->delete();
-
-            return to_route('roles.index')
-                ->with('success', 'Rol eliminado exitosamente.');
+            $message = sprintf('Rol "%s" eliminado exitosamente.', $roleName);
+            Inertia::flash('toast', ['type' => 'success','message' => $message]);   
+            return to_route('roles.index');
 
         } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Hubo un error al intentar eliminar el rol.');
+            Inertia::flash('toast', ['type' => 'error','message' => 'Hubo un error al intentar eliminar el rol.']);
+            return redirect()->back();
         }
     }
 }
