@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import { index as rolesIndex } from '@/routes/roles';
 
 defineOptions({
@@ -37,6 +37,29 @@ defineProps<{
     filters: Filters;
 }>();
 
+const headers = [{ title: 'Nombre', key: 'name' }];
+
+const onUpdateOptions = ({
+    page,
+    itemsPerPage,
+    sortBy,
+}: {
+    page: number;
+    itemsPerPage: number;
+    sortBy: { key: string; order: 'asc' | 'desc' }[];
+}) => {
+    router.get(
+        rolesIndex().url,
+        {
+            page,
+            limit: itemsPerPage,
+            sort: sortBy[0]?.key ?? 'name',
+            order: sortBy[0]?.order ?? 'asc',
+        },
+        { preserveState: true, preserveScroll: true, replace: true, only: ['roles', 'filters'] },
+    );
+};
+
 </script>
 <template>
     <Head title="Roles" />
@@ -47,6 +70,11 @@ defineProps<{
             <VDivider />
             <VCardText>
                 <VDataTable
+                    :headers="headers"
+                    :items="roles.data"
+                    :items-length="roles.total"
+
+                    @update:options="onUpdateOptions"
                 />
             </VCardText>
         </VCard>
