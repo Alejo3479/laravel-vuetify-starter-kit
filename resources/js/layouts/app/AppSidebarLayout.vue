@@ -8,6 +8,7 @@ import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { getInitials } from '@/composables/useInitials';
 import { dashboard, logout } from '@/routes';
 import { edit as editProfile } from '@/routes/profile';
+import { index as rolesIndex } from '@/routes/roles';
 import type { BreadcrumbItem, NavItem } from '@/types';
 
 type Props = {
@@ -51,7 +52,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Roles',
-        href: '/roles',
+        href: rolesIndex(),
         icon: 'mdi-view-dashboard-outline',
     },
 ];
