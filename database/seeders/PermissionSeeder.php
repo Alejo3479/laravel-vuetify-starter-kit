@@ -3,27 +3,42 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Permission;
+use App\Models\PermissionGroup;
 
 class PermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        if (Permission::count() > 0) return;
+        if (PermissionGroup::count() > 0) return;
 
         $datos = [
-            ['name' => 'listar usuarios', 'guard_name' => 'web'],
-            ['name' => 'crear usuarios', 'guard_name' => 'web'],
-            ['name' => 'editar usuarios', 'guard_name' => 'web'],
-            ['name' => 'eliminar usuarios', 'guard_name' => 'web'],
-            ['name' => 'ver roles', 'guard_name' => 'web'],
-            ['name' => 'crear roles', 'guard_name' => 'web'],
-            ['name' => 'editar roles', 'guard_name' => 'web'],
-            ['name' => 'eliminar roles', 'guard_name' => 'web'],
+            [
+                'name' => 'Usuarios',
+                'permissions' => [
+                    ['label' => 'Listar usuarios', 'name' => 'listar usuarios', 'guard_name' => 'web'],
+                    ['label' => 'Ver usuario', 'name' => 'ver usuarios', 'guard_name' => 'web'],
+                    ['label' => 'Crear usuario', 'name' => 'crear usuarios', 'guard_name' => 'web'],
+                    ['label' => 'Editar usuario', 'name' => 'editar usuarios', 'guard_name' => 'web'],
+                    ['label' => 'Eliminar usuario', 'name' => 'eliminar usuarios', 'guard_name' => 'web'],
+                ],
+            ],
+            [
+                'name' => 'Roles',
+                'permissions' => [
+                    ['label' => 'Listar roles', 'name' => 'listar roles', 'guard_name' => 'web'],
+                    ['label' => 'Ver rol', 'name' => 'ver roles', 'guard_name' => 'web'],
+                    ['label' => 'Crear rol', 'name' => 'crear roles', 'guard_name' => 'web'],
+                    ['label' => 'Editar rol', 'name' => 'editar roles', 'guard_name' => 'web'],
+                    ['label' => 'Eliminar rol', 'name' => 'eliminar roles', 'guard_name' => 'web'],
+                ],
+            ],
         ];
 
         foreach ($datos as $dato) {
-            Permission::create($dato);
+            $grupo = PermissionGroup::create([
+                'name' => $dato['name'],
+            ]);
+            $grupo->permissions()->createMany($dato['permissions']);
         }
     }
 }

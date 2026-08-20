@@ -6,6 +6,7 @@ import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { initializeFlashToast } from '@/lib/flashToast';
 import vuetify from '@/plugins/vuetify';
 import '@scss/app.scss';
+import { permission, role } from '@/directives'
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -30,7 +31,10 @@ createInertiaApp({
         color: '#1867c0',
     },
     withApp: (app) => {
-        app.use(vuetify);
+        app
+        .use(vuetify)
+        .directive('permission', permission)
+        .directive('role', role)
     },
 });
 
