@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
-import { index as rolesIndex } from '@/routes/roles';
+import { index as rolesIndex, edit, show } from '@/routes/roles';
 
 defineOptions({
     layout: {
@@ -38,7 +38,10 @@ const props = defineProps<{
     filters: Filters;
 }>();
 
-const headers = [{ title: 'Nombre', key: 'name' }];
+const headers = [
+    { title: 'Nombre', key: 'name' },
+    { title: 'Acciones', key: 'actions', sortable: false, align: 'end' as const },
+];
 
 const fetchRoles = (params: {
     page: number;
@@ -124,7 +127,29 @@ watch(search, (value) => {
                     :page="roles.current_page"
                     item-value="id"
                     @update:options="onUpdateOptions"
-                />
+                >
+                <template v-slot:[`item.actions`]="{ item }">
+                    <VBtn
+                        icon="mdi-eye-outline"
+                        variant="text"
+                        size="small"
+                        @click="router.visit(show(item.id).url)"
+                    />
+                    <VBtn
+                        icon="mdi-pencil-outline"
+                        variant="text"
+                        size="small"
+                        @click="router.visit(edit(item.id).url)"
+                    />
+                    <VBtn
+                        icon="mdi-trash-can-outline"
+                        variant="text"
+                        size="small"
+                        color="error"
+                    />
+                </template>
+                </VDataTableServer>
+
             </VCardText>
         </VCard>
     </div>
