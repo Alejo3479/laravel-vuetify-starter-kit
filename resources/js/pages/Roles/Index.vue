@@ -79,6 +79,14 @@ const onUpdateOptions = ({
 const search = ref<string | null>(props.filters.q ?? '');
 let searchTimeout: ReturnType<typeof setTimeout>;
 
+const confirmDialog = ref(false);
+const roleToDelete = ref<RoleRow | null>(null);
+
+const askDelete = (role: RoleRow) => {
+    roleToDelete.value = role;
+    confirmDialog.value = true;
+};
+
 watch(search, (value) => {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(() => {
@@ -127,29 +135,44 @@ watch(search, (value) => {
                     :page="roles.current_page"
                     item-value="id"
                     @update:options="onUpdateOptions"
-                >
-                <template v-slot:[`item.actions`]="{ item }">
-                    <VBtn
+                    >
+                    <template v-slot:[`item.actions`]="{ item }">
+                        <VBtn
                         icon="mdi-eye-outline"
                         variant="text"
                         size="small"
                         @click="router.visit(show(item.id).url)"
-                    />
-                    <VBtn
+                        />
+                        <VBtn
                         icon="mdi-pencil-outline"
                         variant="text"
                         size="small"
                         @click="router.visit(edit(item.id).url)"
-                    />
-                    <VBtn
-                        icon="mdi-trash-can-outline"
-                        variant="text"
-                        size="small"
-                        color="error"
-                    />
-                </template>
-                </VDataTableServer>
-
+                        />
+                        <VBtn
+                            icon="mdi-trash-can-outline"
+                            variant="text"
+                            size="small"
+                            color="error"
+                            @click="askDelete(item)"
+                            />
+                        </template>
+                    </VDataTableServer>
+                    <VDialog v-model="confirmDialog" max-width="420">
+                        <VCard>
+                            <VCardTitle>Eliminar rol</VCardTitle>
+                            <VCardText>
+                                ¿Seguro que querés eliminar el rol
+                                <strong>{{ roleToDelete?.name }}</strong>? Esta acción no
+                                se puede deshacer.
+                            </VCardText>
+                            <VCardActions>
+                                <VSpacer />
+                                <VBtn variant="text" @click="confirmDialog = false">Cancelar</VBtn>
+                                <VBtn color="error" variant="flat">Eliminar</VBtn>
+                            </VCardActions>
+                        </VCard>
+                    </VDialog>
             </VCardText>
         </VCard>
     </div>
