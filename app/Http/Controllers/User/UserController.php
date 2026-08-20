@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -36,7 +37,14 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        $roles = Role::select(['id', 'name'])
+            ->orderBy('name', 'asc')
+            ->get();
+
+        return Inertia::render('Users/Form', [
+            'action' => 'create',
+            'roles' => $roles
+        ]);
     }
 
     /**
@@ -58,9 +66,22 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(User $user)
     {
-        //
+        $roles = Role::select(['id', 'name'])
+            ->orderBy('name', 'asc')
+            ->get();
+        $user->load('roles:id');
+        return Inertia::render('Users/Form', [
+            'action' => 'edit',
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role_ids' => $user->roles->pluck('id')->toArray(),
+            ],
+            'roles' => $roles
+        ]);
     }
 
     /**
