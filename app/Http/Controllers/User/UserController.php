@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\StoreUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\User;
-use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -50,9 +53,25 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        //
+        try {
+            $user = User::create([
+                'name' => trim($request->name),
+                'email' => trim($request->email),
+                'password' => Hash::make($request->password),
+            ]);
+            if ($request->has('roles')) {
+                $user->assignRole($request->roles);
+            }
+            $message = sprintf('Usuario "%s" registrado exitosamente.', $user->name);
+            return to_route('users.index')
+                ->with('success', $message);
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Hubo un error al intentar crear el usuario.');
+        }
     }
 
     /**
@@ -87,9 +106,26 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+   public function update(User $user, UpdateUserRequest $request)
     {
-        //
+        try {
+            $data = [
+                'name' => trim($request->name),
+                'email' => trim($request->email),
+            ];
+            if ($request->filled('password')) {
+                $data['password'] = Hash::make($request->password);
+            }
+            $user->update($data);
+            $user->syncRoles($request->input('roles', []));
+            $message = sprintf('Usuario "%s" actualizado exitosamente.', $user->name);
+            return to_route('users.index')
+                ->with('success', $message);
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Hubo un error al actualizar el usuario.');
+        }
     }
 
     /**
