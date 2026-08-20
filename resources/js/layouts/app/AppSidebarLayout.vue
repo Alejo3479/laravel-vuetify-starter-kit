@@ -49,6 +49,11 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
         icon: 'mdi-view-dashboard-outline',
     },
+    {
+        title: 'Roles',
+        href: '/roles',
+        icon: 'mdi-view-dashboard-outline',
+    },
 ];
 
 const footerNavItems: NavItem[] = [
