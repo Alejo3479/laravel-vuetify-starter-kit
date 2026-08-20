@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -77,9 +78,23 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(User $user)
     {
-        //
+        $roles = Role::select(['id', 'name'])
+            ->orderBy('name', 'asc')
+            ->get();
+        $user->load('roles:id');
+        
+        return Inertia::render('Users/Form', [
+            'action' => 'show',
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role_ids' => $user->roles->pluck('id')->toArray(),
+            ],
+            'roles' => $roles
+        ]);
     }
 
     /**
@@ -131,8 +146,22 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $user)
     {
-        //
+        try {
+            if ($user->id === Auth::id()) {
+                return redirect()->back()
+                    ->with('error', 'No puedes eliminar tu propia cuenta de usuario.');
+            }
+            $userName = $user->name;
+            $user->delete();
+            $message = sprintf('Usuario "%s" eliminado exitosamente.', $userName);
+            return to_route('users.index')
+                ->with('success', $message);
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Hubo un error al intentar eliminar el usuario.');
+        }
     }
 }
