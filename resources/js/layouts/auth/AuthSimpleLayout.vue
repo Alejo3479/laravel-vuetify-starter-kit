@@ -2,7 +2,7 @@
 import { Link } from '@inertiajs/vue3';
 import AppLogo from '@/components/AppLogo.vue';
 import AppToast from '@/components/AppToast.vue';
-import { home } from '@/routes';
+import { dashboard } from '@/routes';
 
 defineProps<{
     title?: string;
@@ -17,7 +17,7 @@ defineProps<{
                 <VCard class="auth-card" elevation="4">
                     <VCardText class="pa-8">
                         <Link
-                            :href="home()"
+                            :href="dashboard()"
                             class="d-flex align-center justify-center mb-6"
                         >
                             <AppLogo />
