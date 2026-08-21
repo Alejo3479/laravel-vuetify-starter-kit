@@ -12,14 +12,40 @@ defineOptions({
         ],
     },
 });
+
+interface UserRow {
+    id: number;
+    name: string;
+    email: string;
+}
+
+interface PaginatedUsers {
+    data: UserRow[];
+    current_page: number;
+    per_page: number;
+    total: number;
+}
+
+interface Filters {
+    q: string | null;
+    sort: string | null;
+    order: 'asc' | 'desc' | null;
+    limit: number | null;
+}
+
+defineProps<{
+    users: PaginatedUsers;
+    filters: Filters;
+}>();
+
 </script>
 
 <template>
-    <Head title="Roles" />
+    <Head title="Usuarios" />
 
     <div class="app-page">
         <VCard>
-            <VCardTitle>Listado de Roles</VCardTitle>
+            <VCardTitle>Listado de Usuarios</VCardTitle>
             <VDivider />
             <VCardText>
                 <VDataTable
