@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, useForm, setLayoutProps } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import { index as rolesIndex } from '@/routes/roles';
+import storeForm, { index as rolesIndex, update as updateForm } from '@/routes/roles';
 
 interface RoleData {
     id: number;
@@ -47,6 +47,14 @@ const form = useForm({
     permissions: props.role?.permission_ids ?? [],
 });
 const selectedGroup = ref(props.permissionGroups[0]?.id ?? null);
+
+const submit = () => {
+    if (props.action === 'create') {
+        form.post(storeForm.store().url);
+    } else {
+        form.submit(updateForm.put(props.role!.id));
+    }
+};
 </script>
 
 <template>
@@ -93,7 +101,14 @@ const selectedGroup = ref(props.permissionGroups[0]?.id ?? null);
                         </VWindowItem>
                     </VWindow>
                 </div>
-                <VBtn class="mt-4" color="primary">Guardar</VBtn>
+                <VBtn
+                    class="mt-4"
+                    color="primary"
+                    :loading="form.processing"
+                    @click="submit"
+                >
+                    Guardar
+                </VBtn>
             </VCardText>
         </VCard>
     </div>
