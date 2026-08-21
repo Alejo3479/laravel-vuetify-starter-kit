@@ -33,7 +33,7 @@ const pageTitle = computed(
         props.title ??
         props.breadcrumbs.at(-1)?.title ??
         props.breadcrumbs[0]?.title ??
-        'Laravel Starter Kit',
+        'Pasarela de Pagos',
 );
 
 const sidebarToggleIcon = computed(() => {
