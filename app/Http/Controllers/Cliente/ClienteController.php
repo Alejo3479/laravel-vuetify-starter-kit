@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\Cliente;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\User\StoreUserRequest;
-use App\Http\Requests\User\UpdateUserRequest;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
+use App\Http\Requests\Cliente\StoreClienteRequest;
+use App\Http\Requests\Cliente\UpdateClienteRequest;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
-class UserController extends Controller
+class ClienteController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -23,15 +23,16 @@ class UserController extends Controller
         $order = $request->input('order', 'asc') ?: 'asc';
         $limit = $request->input('limit', 10);
         $search = $request->input('q');
-        $usersQuery = User::query()
+        $clientesQuery = User::role('Cliente')
             ->select(['id', 'name', 'email'])
             ->when($search, function ($query, $search) {
                 $query->where('name', 'like', "%{$search}%");
             })
             ->orderBy($sort, $order);
-        $users = $usersQuery->paginate($limit)->withQueryString();
-        return Inertia::render('Users/Index', [
-            'users' => $users,
+    
+        $clientes = $clientesQuery->paginate($limit)->withQueryString();
+        return Inertia::render('Clientes/Index', [
+            'clientes' => $clientes,
             'filters' => $request->only(['q', 'sort', 'order', 'limit']),
         ]);
     }
@@ -41,13 +42,12 @@ class UserController extends Controller
      */
     public function create()
     {
-        $roles = Role::select(['id', 'name'])
-            ->orderBy('name', 'asc')
-            ->get();
+        
+        $roles = Role::select(['id', 'name'])->where('name', 'Cliente')->orderBy('name', 'asc')->get();
 
         return Inertia::render('Users/Form', [
             'action' => 'create',
-            'cliente' => false,
+            'cliente' => true,
             'roles' => $roles
         ]);
     }
@@ -55,23 +55,23 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUserRequest $request)
+    public function store(StoreClienteRequest $request)
     {
         try {
-            $user = User::create([
+            $cliente  = User::create([
                 'name' => trim($request->name),
                 'email' => trim($request->email),
                 'password' => Hash::make($request->password),
             ]);
             if ($request->has('roles')) {
-                $user->assignRole($request->roles);
+                $cliente ->assignRole($request->roles);
             }
-            $message = sprintf('Usuario "%s" registrado exitosamente.', $user->name);
+            $message = sprintf('Cliente  "%s" registrado exitosamente.', $cliente ->name);
             Inertia::flash('toast', ['type' => 'success', 'message' => $message]);
-            return to_route('users.index');
+            return to_route('clientes.index');
 
         } catch (\Exception $e) {
-            Inertia::flash('toast', ['type' => 'error', 'message' => 'Hubo un error al intentar crear el usuario.']);
+            Inertia::flash('toast', ['type' => 'error', 'message' => 'Hubo un error al intentar crear el cliente.']);
             return redirect()->back();
         }
     }
@@ -79,21 +79,19 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show(User $cliente)
     {
-        $roles = Role::select(['id', 'name'])
-            ->orderBy('name', 'asc')
-            ->get();
-        $user->load('roles:id');
-        
+        $roles = Role::select(['id', 'name'])->where('name', 'Cliente')->get();
+        $cliente->load('roles:id');
+
         return Inertia::render('Users/Form', [
-            'cliente' => false,
             'action' => 'show',
+            'cliente' => true,
             'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'role_ids' => $user->roles->pluck('id')->toArray(),
+                'id' => $cliente->id,
+                'name' => $cliente->name,
+                'email' => $cliente->email,
+                'role_ids' => $cliente->roles->pluck('id')->toArray(),
             ],
             'roles' => $roles
         ]);
@@ -102,20 +100,19 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user)
+    public function edit(User $cliente)
     {
-        $roles = Role::select(['id', 'name'])
-            ->orderBy('name', 'asc')
-            ->get();
-        $user->load('roles:id');
+        $roles = Role::select(['id', 'name'])->where('name', 'Cliente')->get();
+        $cliente->load('roles:id');
+
         return Inertia::render('Users/Form', [
             'action' => 'edit',
-            'cliente' => false,
+            'cliente' => true,
             'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'role_ids' => $user->roles->pluck('id')->toArray(),
+                'id' => $cliente->id,
+                'name' => $cliente->name,
+                'email' => $cliente->email,
+                'role_ids' => $cliente->roles->pluck('id')->toArray(),
             ],
             'roles' => $roles
         ]);
@@ -124,7 +121,7 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-   public function update(User $user, UpdateUserRequest $request)
+    public function update(User $cliente, UpdateClienteRequest $request)
     {
         try {
             $data = [
@@ -134,15 +131,15 @@ class UserController extends Controller
             if ($request->filled('password')) {
                 $data['password'] = Hash::make($request->password);
             }
-            $user->update($data);
-            $user->syncRoles($request->input('roles', []));
-            $message = sprintf('Usuario "%s" actualizado exitosamente.', $user->name);
+            $cliente->update($data);
+            $cliente->syncRoles($request->input('roles', []));
+            $message = sprintf('Cliente "%s" actualizado exitosamente.', $cliente->name);
 
             Inertia::flash('toast', ['type' => 'success', 'message' => $message]);
-            return to_route('users.index');
+            return to_route('clientes.index');
 
         } catch (\Exception $e) {
-            Inertia::flash('toast', ['type' => 'error', 'message' =>  'Hubo un error al actualizar el usuario.']);
+            Inertia::flash('toast', ['type' => 'error', 'message' =>  'Hubo un error al actualizar el cliente.']);
             return redirect()->back();
         }
     }
@@ -150,21 +147,21 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy(User $cliente)
     {
-        try {
-            if ($user->id === Auth::id()) {
+       try {
+            if ($cliente->id === Auth::id()) {
                 Inertia::flash('toast', ['type' => 'error','message' => 'No puedes eliminar tu propia cuenta de usuario.']);
                 return redirect()->back();
             }
-            $userName = $user->name;
-            $user->delete();
-            $message = sprintf('Usuario "%s" eliminado exitosamente.', $userName);
+            $userName = $cliente->name;
+            $cliente->delete();
+            $message = sprintf('Cliente "%s" eliminado exitosamente.', $userName);
             Inertia::flash('toast', ['type' => 'success','message' => $message]);
-            return to_route('users.index');
+            return to_route('clientes.index');
 
         } catch (\Exception $e) {
-            Inertia::flash('toast', ['type' => 'error','message' => 'Hubo un error al intentar eliminar el usuario.']);
+            Inertia::flash('toast', ['type' => 'error','message' => 'Hubo un error al intentar eliminar el cliente.']);
             return redirect()->back();
         }
     }
