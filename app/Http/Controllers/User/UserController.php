@@ -26,7 +26,8 @@ class UserController extends Controller
         $usersQuery = User::query()
             ->select(['id', 'name', 'email'])
             ->when($search, function ($query, $search) {
-                $query->where('name', 'like', "%{$search}%");
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")   ;
             })
             ->orderBy($sort, $order);
         $users = $usersQuery->paginate($limit)->withQueryString();
