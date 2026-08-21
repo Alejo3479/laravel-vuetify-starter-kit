@@ -54,7 +54,7 @@ export default createVuetify({
                 dark: false,
                 colors: {
                     // Neutral monochrome foundation
-                    primary: '#111111',
+                    primary: '#f5f5f5',
                     secondary: '#424242',
 
                     // Base surfaces
@@ -72,7 +72,7 @@ export default createVuetify({
                 dark: true,
                 colors: {
                     // Inverted monochrome adaptation
-                    primary: '#f5f5f5',
+                    primary: '#111111',
                     secondary: '#b0b0b0',
 
                     // Dark surfaces
