@@ -10,6 +10,7 @@ use Spatie\Permission\Models\Role;
 use App\Http\Requests\Cliente\StoreClienteRequest;
 use App\Http\Requests\Cliente\UpdateClienteRequest;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class ClienteController extends Controller
 {
@@ -78,9 +79,22 @@ class ClienteController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(User $cliente)
     {
-        //
+        $roles = Role::select(['id', 'name'])->where('name', 'Cliente')->get();
+        $cliente->load('roles:id');
+
+        return Inertia::render('Users/Form', [
+            'action' => 'show',
+            'cliente' => true,
+            'user' => [
+                'id' => $cliente->id,
+                'name' => $cliente->name,
+                'email' => $cliente->email,
+                'role_ids' => $cliente->roles->pluck('id')->toArray(),
+            ],
+            'roles' => $roles
+        ]);
     }
 
     /**
@@ -133,8 +147,22 @@ class ClienteController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $cliente)
     {
-        //
+       try {
+            if ($cliente->id === Auth::id()) {
+                Inertia::flash('toast', ['type' => 'error','message' => 'No puedes eliminar tu propia cuenta de usuario.']);
+                return redirect()->back();
+            }
+            $userName = $cliente->name;
+            $cliente->delete();
+            $message = sprintf('Cliente "%s" eliminado exitosamente.', $userName);
+            Inertia::flash('toast', ['type' => 'success','message' => $message]);
+            return to_route('clientes.index');
+
+        } catch (\Exception $e) {
+            Inertia::flash('toast', ['type' => 'error','message' => 'Hubo un error al intentar eliminar el cliente.']);
+            return redirect()->back();
+        }
     }
 }
