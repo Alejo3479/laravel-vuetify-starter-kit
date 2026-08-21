@@ -8,8 +8,8 @@ import { request } from '@/routes/password';
 
 defineOptions({
     layout: {
-        title: 'Log in to your account',
-        description: 'Enter your email and password below to log in',
+        title: 'Ingresar',
+        description: null,
     },
 });
 
@@ -21,7 +21,7 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="Log in" />
+    <Head title="Ingresar" />
 
     <VAlert v-if="status" type="success" variant="tonal" class="mb-4">
         {{ status }}
@@ -33,7 +33,7 @@ defineProps<{
         v-slot="{ errors, processing }"
     >
         <div class="starter-field mb-4">
-            <label for="email">Email address</label>
+            <label for="email">Email</label>
             <VTextField
                 id="email"
                 type="email"
@@ -49,9 +49,9 @@ defineProps<{
         </div>
 
         <div class="d-flex align-center justify-space-between">
-            <label for="password" class="auth-field-label">Password</label>
+            <label for="password" class="auth-field-label">Contraseña</label>
             <TextLink v-if="canResetPassword" :href="request()" :tabindex="5">
-                Forgot password?
+                ¿Olvidaste tu contraseña?
             </TextLink>
         </div>
 
@@ -70,7 +70,7 @@ defineProps<{
 
         <VCheckbox
             name="remember"
-            label="Remember me"
+            label="Recordar sesión"
             value="on"
             density="compact"
             hide-details
@@ -85,12 +85,12 @@ defineProps<{
             :disabled="processing"
             data-test="login-button"
         >
-            Log in
+            Ingresar
         </VBtn>
 
         <div v-if="canRegister" class="text-center text-body-2 mt-6">
-            Don't have an account?
-            <TextLink :href="register()" :tabindex="5">Sign up</TextLink>
+            ¿No tienes una cuenta aún?
+            <TextLink :href="register()" :tabindex="5">Registrar</TextLink>
         </div>
     </Form>
 </template>

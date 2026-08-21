@@ -15,6 +15,10 @@
         text-decoration: none;
     }
 
+    .app-logo {
+        transition: filter 0.2s ease;
+    }
+
     .app-page {
         margin: 0;
         max-width: none;
@@ -75,6 +79,10 @@
     }
 
     .v-theme--dark {
+        .app-logo {
+            filter: invert(1);
+        }
+
         .app-sidebar {
             background: rgb(var(--v-theme-background)) !important;
             border-right: none !important;
