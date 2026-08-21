@@ -20,6 +20,16 @@ const props = withDefaults(defineProps<Props>(), {
     breadcrumbs: () => [],
 });
 
+const breadcrumbItems = computed(() =>
+    props.breadcrumbs.map((item) => ({
+        ...item,
+        href:
+            typeof item.href === 'string'
+                ? item.href
+                : item.href?.url,
+    })),
+);
+
 const page = usePage();
 const auth = computed(() => page.props.auth);
 const { mdAndDown } = useDisplay();
@@ -27,14 +37,6 @@ const isMobile = computed(() => mdAndDown.value);
 const drawer = ref(!isMobile.value);
 const rail = ref(false);
 const { isCurrentUrl } = useCurrentUrl();
-
-const pageTitle = computed(
-    () =>
-        props.title ??
-        props.breadcrumbs.at(-1)?.title ??
-        props.breadcrumbs[0]?.title ??
-        'Pasarela de Pagos',
-);
 
 const sidebarToggleIcon = computed(() => {
     if (isMobile.value) {
@@ -223,7 +225,28 @@ watch(
                         variant="text"
                         @click="toggleSidebar"
                     />
-                    <span class="app-frame-title">{{ pageTitle }}</span>
+                    <VBreadcrumbs
+                            :items="breadcrumbItems"
+                        class="pa-0"
+                    >
+                        <template #item="{ item }">
+                            <Link
+                                v-if="item.href"
+                                :href="item.href"
+                                class="text-decoration-none"
+                            >
+                                {{ item.title }}
+                            </Link>
+
+                            <span v-else>
+                                {{ item.title }}
+                            </span>
+                        </template>
+
+                        <template #divider>
+                            <VIcon icon="mdi-chevron-right" size="18" />
+                        </template>
+                    </VBreadcrumbs>
                 </header>
 
                 <main class="app-frame-body">

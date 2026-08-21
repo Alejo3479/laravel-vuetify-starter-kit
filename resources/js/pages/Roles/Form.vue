@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { Head, useForm, setLayoutProps } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { index as rolesIndex } from '@/routes/roles';
 
 interface RoleData {
+    id: number;
     name: string;
     permission_ids: number[];
 }
@@ -26,17 +27,19 @@ const props = defineProps<{
     role?: RoleData;
 }>();
 
-const page = usePage();
-
-defineOptions({
-    layout: {
-        breadcrumbs: [
-            {
-                title: 'Roles',
-                href: rolesIndex(),
-            },
-        ],
-    },
+setLayoutProps({
+    breadcrumbs: [
+        {
+            title: 'Roles',
+            href: rolesIndex(),
+        },
+        {
+            title:
+                props.action === 'create'
+                    ? 'Nuevo'
+                    : props.role?.name ?? 'Editar',
+        },
+    ],
 });
 
 const form = useForm({
