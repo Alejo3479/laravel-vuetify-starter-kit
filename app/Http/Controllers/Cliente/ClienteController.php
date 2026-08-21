@@ -4,15 +4,32 @@ namespace App\Http\Controllers\Cliente;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User;
+use Inertia\Inertia;
 
 class ClienteController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $sort = $request->input('sort', 'name') ?: 'name';
+        $order = $request->input('order', 'asc') ?: 'asc';
+        $limit = $request->input('limit', 10);
+        $search = $request->input('q');
+        $clientesQuery = User::role('Cliente')
+            ->select(['id', 'name', 'email'])
+            ->when($search, function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%");
+            })
+            ->orderBy($sort, $order);
+    
+        $clientes = $clientesQuery->paginate($limit)->withQueryString();
+        return Inertia::render('Clientes/Index', [
+            'clientes' => $clientes,
+            'filters' => $request->only(['q', 'sort', 'order', 'limit']),
+        ]);
     }
 
     /**
