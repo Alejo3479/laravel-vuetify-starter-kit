@@ -4,6 +4,7 @@ namespace App\Http\Requests\Role;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateRoleRequest extends FormRequest
 {
@@ -22,8 +23,14 @@ class UpdateRoleRequest extends FormRequest
      */
     public function rules(): array
     {
+       $roleId = $this->route('role')?->id;
        return [
-            'name' => ['required', 'string','min:1', 'max:255'],
+            'name' => ['required', 'string','min:1', 'max:255', Rule::unique('roles', 'name')
+                ->ignore($roleId)
+                ->where(function ($query) {
+                    return $query->whereRaw('BINARY name = ?', [$this->name]);
+                }),
+            ],
             'permissions' => ['array'],
             'permissions.*' => ['required', 'exists:permissions,id'],
         ];
