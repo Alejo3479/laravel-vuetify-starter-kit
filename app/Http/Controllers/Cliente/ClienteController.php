@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
+use App\Http\Requests\Cliente\StoreClienteRequest;
+use App\Http\Requests\Cliente\UpdateClienteRequest;
+use Illuminate\Support\Facades\Hash;
 
 class ClienteController extends Controller
 {
@@ -51,9 +54,25 @@ class ClienteController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreClienteRequest $request)
     {
-        //
+        try {
+            $cliente  = User::create([
+                'name' => trim($request->name),
+                'email' => trim($request->email),
+                'password' => Hash::make($request->password),
+            ]);
+            if ($request->has('roles')) {
+                $cliente ->assignRole($request->roles);
+            }
+            $message = sprintf('Cliente  "%s" registrado exitosamente.', $cliente ->name);
+            Inertia::flash('toast', ['type' => 'success', 'message' => $message]);
+            return to_route('clientes.index');
+
+        } catch (\Exception $e) {
+            Inertia::flash('toast', ['type' => 'error', 'message' => 'Hubo un error al intentar crear el cliente.']);
+            return redirect()->back();
+        }
     }
 
     /**
@@ -88,9 +107,27 @@ class ClienteController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(User $cliente, UpdateClienteRequest $request)
     {
-        //
+        try {
+            $data = [
+                'name' => trim($request->name),
+                'email' => trim($request->email),
+            ];
+            if ($request->filled('password')) {
+                $data['password'] = Hash::make($request->password);
+            }
+            $cliente->update($data);
+            $cliente->syncRoles($request->input('roles', []));
+            $message = sprintf('Cliente "%s" actualizado exitosamente.', $cliente->name);
+
+            Inertia::flash('toast', ['type' => 'success', 'message' => $message]);
+            return to_route('clientes.index');
+
+        } catch (\Exception $e) {
+            Inertia::flash('toast', ['type' => 'error', 'message' =>  'Hubo un error al actualizar el cliente.']);
+            return redirect()->back();
+        }
     }
 
     /**
