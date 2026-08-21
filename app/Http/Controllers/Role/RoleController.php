@@ -73,7 +73,8 @@ class RoleController extends Controller
             return to_route('roles.index');
 
         } catch (\Exception $e) {
-            Inertia::flash('toast', ['type' => 'error','message' => 'Hubo un error al intentar crear el rol.']);
+            $message = sprintf('Hubo un error al crear el rol: %s', $e->getMessage());
+            Inertia::flash('toast', ['type' => 'error','message' => $message]);
             return redirect()->back();
         }
     }
@@ -145,7 +146,8 @@ class RoleController extends Controller
             return to_route('roles.index');
 
         } catch (\Exception $e) {
-            Inertia::flash('toast', ['type' => 'error','message' => 'Hubo un error al actualizar el rol.']);    
+            $message = sprintf('Hubo un error al actualizar el rol: %s', $e->getMessage());
+            Inertia::flash('toast', ['type' => 'error','message' => $message]);    
             return redirect()->back();
         }   
     }
@@ -168,7 +170,8 @@ class RoleController extends Controller
             return to_route('roles.index');
 
         } catch (\Exception $e) {
-            Inertia::flash('toast', ['type' => 'error','message' => 'Hubo un error al intentar eliminar el rol.']);
+            $message = sprintf('Hubo un error al intentar eliminar el rol: %s', $e->getMessage());
+            Inertia::flash('toast', ['type' => 'error','message' => $message]);
             return redirect()->back();
         }
     }

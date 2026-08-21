@@ -25,10 +25,8 @@ class StoreRoleRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string','min:1', 'max:255',
-                Rule::unique('roles', 'name')->where(function ($query) {
-                        return $query->whereRaw('BINARY name = ?', [$this->name]);
-                    }),
-                ],
+                Rule::unique('roles', 'name')                    
+            ],
             'permissions' => ['array'],
             'permissions.*' => ['required', 'exists:permissions,id'],
         ];
