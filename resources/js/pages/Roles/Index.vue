@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
-import { index as rolesIndex, edit, show, destroy } from '@/routes/roles';
+import { index as rolesIndex, edit, show, destroy, create as rolesCreate } from '@/routes/roles';
 
 defineOptions({
     layout: {
@@ -120,7 +120,18 @@ watch(search, (value) => {
 
     <div class="app-page">
         <VCard>
-            <VCardTitle>Listado de Roles</VCardTitle>
+            <div class="d-flex align-stretch" style="padding: 0;">
+                <VCardTitle class="align-self-center">Listado de Roles</VCardTitle>
+                <VBtn
+                    class="ms-auto rounded-0"
+                    color="primary"
+                    prepend-icon="mdi-plus"
+                    :href="rolesCreate().url"
+                    style="border-radius: 0;"
+                >
+                    Nuevo
+                </VBtn>
+            </div>
             <VDivider />
             <VCardText>
 
