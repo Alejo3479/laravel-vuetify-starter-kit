@@ -9,9 +9,13 @@ class PermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        if (PermissionGroup::count() > 0) return;
-
         $datos = [
+            [
+                'name' => 'Tablero',
+                'permissions' => [
+                    ['label' => 'Ver tablero', 'name' => 'ver tablero', 'guard_name' => 'web'],
+                ],
+            ],
             [
                 'name' => 'Usuarios',
                 'permissions' => [
@@ -35,10 +39,17 @@ class PermissionSeeder extends Seeder
         ];
 
         foreach ($datos as $dato) {
-            $grupo = PermissionGroup::create([
+            $grupo = PermissionGroup::firstOrCreate([
                 'name' => $dato['name'],
             ]);
-            $grupo->permissions()->createMany($dato['permissions']);
+            foreach ($item as $dato['permissions']) {
+                $grupo->permissions()->firstOrCreate([
+                    'name' => $item['name'],
+                ], [
+                    'label' => $item['label'],
+                    'guard_name' => $item['guard_name'],
+                ]);
+            }
         }
     }
 }
