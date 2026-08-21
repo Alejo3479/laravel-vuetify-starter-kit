@@ -9,6 +9,7 @@ import { getInitials } from '@/composables/useInitials';
 import { dashboard, logout } from '@/routes';
 import { edit as editProfile } from '@/routes/profile';
 import { index as rolesIndex } from '@/routes/roles';
+import { index as usersIndex } from '@/routes/users';
 import type { BreadcrumbItem, NavItem } from '@/types';
 
 type Props = {
@@ -55,7 +56,12 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Roles',
         href: rolesIndex(),
-        icon: 'mdi-view-dashboard-outline',
+        icon: 'mdi-shield-account-outline',
+    },
+    {
+        title: 'Usuarios',
+        href: usersIndex(),
+        icon: 'mdi-account-badge-outline',
     },
 ];
 
