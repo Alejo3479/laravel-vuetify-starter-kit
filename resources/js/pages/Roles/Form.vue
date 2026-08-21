@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { index as rolesIndex } from '@/routes/roles';
 
@@ -25,6 +25,8 @@ const props = defineProps<{
     permissionGroups: PermissionGroup[];
     role?: RoleData;
 }>();
+
+const page = usePage();
 
 defineOptions({
     layout: {
