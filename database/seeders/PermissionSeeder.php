@@ -42,7 +42,7 @@ class PermissionSeeder extends Seeder
             $grupo = PermissionGroup::firstOrCreate([
                 'name' => $dato['name'],
             ]);
-            foreach ($item as $dato['permissions']) {
+            foreach ($dato['permissions'] as $item) {
                 $grupo->permissions()->firstOrCreate([
                     'name' => $item['name'],
                 ], [
