@@ -26,7 +26,8 @@ class ClienteController extends Controller
         $clientesQuery = User::role('Cliente')
             ->select(['id', 'name', 'email'])
             ->when($search, function ($query, $search) {
-                $query->where('name', 'like', "%{$search}%");
+                $query->where('name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%");
             })
             ->orderBy($sort, $order);
     
