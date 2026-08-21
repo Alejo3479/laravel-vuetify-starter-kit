@@ -38,6 +38,7 @@ export default defineConfig({
         alias: {
             '@': fileURLToPath(new URL('./resources/js', import.meta.url)),
             '@scss': fileURLToPath(new URL('./resources/scss', import.meta.url)),
+            '@assets': fileURLToPath(new URL('./resources/assets', import.meta.url)),
         },
     },
 });

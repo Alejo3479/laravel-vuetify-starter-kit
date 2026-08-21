@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\PermissionGroup;
 
 class RoleController extends Controller
 {
@@ -42,13 +43,17 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $permissions = Permission::select('id', 'name')
+        $permissionGroups = PermissionGroup::select(['id', 'name'])
+            ->with(['permissions' => function ($query) {
+                $query->select(['id', 'name', 'permission_group_id'])
+                    ->orderBy('name', 'asc');
+            }])
             ->orderBy('name', 'asc')
             ->get();
 
         return Inertia::render('Roles/Form', [
             'action' => 'create',
-            'permissions' => $permissions
+            'permissionGroups' => $permissionGroups
         ]);
     }
 
@@ -78,7 +83,11 @@ class RoleController extends Controller
      */
     public function show(Role $role)
     {
-        $permissions = Permission::select('id', 'name')
+        $permissionGroups = PermissionGroup::select(['id', 'name'])
+            ->with(['permissions' => function ($query) {
+                $query->select(['id', 'name', 'permission_group_id'])
+                    ->orderBy('name', 'asc');
+            }])
             ->orderBy('name', 'asc')
             ->get();
 
@@ -92,7 +101,7 @@ class RoleController extends Controller
                 'name' => $role->name,
                 'permission_ids' => $role->permissions->pluck('id')->toArray(),
             ],
-            'permissions' => $permissions
+            'permissionGroups' => $permissionGroups
         ]);
     }
 
@@ -101,10 +110,13 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        $permissions = Permission::select('id', 'name')
+        $permissionGroups = PermissionGroup::select(['id', 'name'])
+            ->with(['permissions' => function ($query) {
+                $query->select(['id', 'name', 'permission_group_id'])
+                    ->orderBy('name', 'asc');
+            }])
             ->orderBy('name', 'asc')
             ->get();
-
         // cargar ids de los permisos que el rol ya tiene asignados
         $role->load('permissions:id');
 
@@ -115,7 +127,7 @@ class RoleController extends Controller
                 'name' => $role->name,
                 'permission_ids' => $role->permissions->pluck('id')->toArray(),
             ],
-            'permissions' => $permissions
+            'permissionGroups' => $permissionGroups
         ]);
     }
 
