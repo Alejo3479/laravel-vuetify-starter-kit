@@ -76,6 +76,14 @@ const onUpdateOptions = ({
                 :headers="headers"
                     :items="users.data"
                     :items-length="users.total"
+                    :items-per-page="users.per_page"
+                    :items-per-page-options="[
+                        { value: 10, title: '10' },
+                        { value: 25, title: '25' },
+                        { value: 50, title: '50' },
+                    ]"
+                    :page="users.current_page"
+                    item-value="id"
                     @update:options="onUpdateOptions"
 
                 />
