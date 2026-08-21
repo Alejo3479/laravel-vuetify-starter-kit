@@ -47,6 +47,7 @@ class UserController extends Controller
 
         return Inertia::render('Users/Form', [
             'action' => 'create',
+            'cliente' => false,
             'roles' => $roles
         ]);
     }
@@ -86,6 +87,7 @@ class UserController extends Controller
         $user->load('roles:id');
         
         return Inertia::render('Users/Form', [
+            'cliente' => false,
             'action' => 'show',
             'user' => [
                 'id' => $user->id,
@@ -108,6 +110,7 @@ class UserController extends Controller
         $user->load('roles:id');
         return Inertia::render('Users/Form', [
             'action' => 'edit',
+            'cliente' => false,
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
