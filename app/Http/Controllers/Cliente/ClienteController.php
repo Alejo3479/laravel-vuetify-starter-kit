@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Inertia\Inertia;
+use Spatie\Permission\Models\Role;
 
 class ClienteController extends Controller
 {
@@ -37,7 +38,14 @@ class ClienteController extends Controller
      */
     public function create()
     {
-        //
+        
+        $roles = Role::select(['id', 'name'])->where('name', 'Cliente')->orderBy('name', 'asc')->get();
+
+        return Inertia::render('Users/Form', [
+            'action' => 'create',
+            'cliente' => true,
+            'roles' => $roles
+        ]);
     }
 
     /**
@@ -59,9 +67,22 @@ class ClienteController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(User $cliente)
     {
-        //
+        $roles = Role::select(['id', 'name'])->where('name', 'Cliente')->get();
+        $cliente->load('roles:id');
+
+        return Inertia::render('Users/Form', [
+            'action' => 'edit',
+            'cliente' => true,
+            'user' => [
+                'id' => $cliente->id,
+                'name' => $cliente->name,
+                'email' => $cliente->email,
+                'role_ids' => $cliente->roles->pluck('id')->toArray(),
+            ],
+            'roles' => $roles
+        ]);
     }
 
     /**
