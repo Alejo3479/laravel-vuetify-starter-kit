@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { Head, useForm, setLayoutProps } from '@inertiajs/vue3';
-import { index as usersIndex } from '@/routes/users';
+import {
+    index as usersIndex,
+    store as usersStore,
+    update as usersUpdate,
+} from '@/routes/users';
 
 interface Role {
     id: number;
@@ -16,7 +20,6 @@ interface UserData {
 
 const props = defineProps<{
     action: 'create' | 'edit' | 'show';
-    cliente?: boolean;
     roles: Role[];
     user?: UserData;
 }>();
@@ -42,6 +45,14 @@ const form = useForm({
     password: '',
     roles: props.user?.role_ids ?? [],
 });
+
+const submit = () => {
+    if (props.action === 'create') {
+        form.post(usersStore().url);
+    } else {
+        form.put(usersUpdate(props.user!.id).url);
+    }
+};
 </script>
 
 <template>
@@ -76,7 +87,14 @@ const form = useForm({
                         hide-details
                     />
                 </div>
-                <VBtn class="mt-4" color="primary">Guardar</VBtn>
+                <VBtn
+                    class="mt-4"
+                    color="primary"
+                    :loading="form.processing"
+                    @click="submit"
+                >
+                    Guardar
+                </VBtn>
             </VCardText>
         </VCard>
     </div>
