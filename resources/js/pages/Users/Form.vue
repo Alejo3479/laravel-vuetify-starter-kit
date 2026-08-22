@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, useForm, setLayoutProps } from '@inertiajs/vue3';
 import { index as usersIndex } from '@/routes/users';
 
 interface Role {
@@ -21,15 +21,19 @@ const props = defineProps<{
     user?: UserData;
 }>();
 
-defineOptions({
-    layout: {
-        breadcrumbs: [
-            {
-                title: 'Usuarios',
-                href: usersIndex(),
-            },
-        ],
-    },
+setLayoutProps({
+    breadcrumbs: [
+        {
+            title: 'Usuarios',
+            href: usersIndex(),
+        },
+        {
+            title:
+                props.action === 'create'
+                    ? 'Nuevo'
+                    : props.user?.name ?? 'Editar',
+        },
+    ],
 });
 
 const form = useForm({
