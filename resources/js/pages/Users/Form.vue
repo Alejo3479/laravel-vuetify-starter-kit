@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm, setLayoutProps } from '@inertiajs/vue3';
+import { ref } from 'vue';
 import {
     index as usersIndex,
     store as usersStore,
@@ -39,10 +40,14 @@ setLayoutProps({
     ],
 });
 
+const showPassword = ref(false);
+const showPasswordConfirmation = ref(false);
+
 const form = useForm({
     name: props.user?.name ?? '',
     email: props.user?.email ?? '',
     password: '',
+    password_confirmation: '',
     roles: props.user?.role_ids ?? [],
 });
 
@@ -67,6 +72,7 @@ const submit = () => {
                     label="Nombre"
                     variant="outlined"
                     density="compact"
+                    :error-messages="form.errors.name"
                 />
                 <VTextField
                     v-model="form.email"
@@ -74,6 +80,31 @@ const submit = () => {
                     variant="outlined"
                     density="compact"
                     class="mt-4"
+                    :error-messages="form.errors.email"
+                />
+                <VTextField
+                    v-if="props.action !== 'show'"
+                    v-model="form.password"
+                    label="Contraseña"
+                    :type="showPassword ? 'text' : 'password'"
+                    :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                    @click:append-inner="showPassword = !showPassword"
+                    variant="outlined"
+                    density="compact"
+                    class="mt-4"
+                    :error-messages="form.errors.password"
+                />
+                <VTextField
+                    v-if="props.action !== 'show'"
+                    v-model="form.password_confirmation"
+                    label="Confirmar contraseña"
+                    :type="showPasswordConfirmation ? 'text' : 'password'"
+                    :append-inner-icon="showPasswordConfirmation ? 'mdi-eye-off' : 'mdi-eye'"
+                    @click:append-inner="showPasswordConfirmation = !showPasswordConfirmation"
+                    variant="outlined"
+                    density="compact"
+                    class="mt-4"
+                    :error-messages="form.errors.password_confirmation"
                 />
                 <div class="mt-4">
                     <p class="text-body-2 mb-2">Roles</p>
@@ -85,9 +116,11 @@ const submit = () => {
                         :value="role.id"
                         density="compact"
                         hide-details
+                        :disabled="props.action === 'show'"
                     />
                 </div>
                 <VBtn
+                    v-if="props.action !== 'show'"
                     class="mt-4"
                     color="primary"
                     :loading="form.processing"

@@ -170,20 +170,29 @@ watch(search, (value) => {
                         variant="text"
                         size="small"
                         @click="router.visit(show(item.id).url)"
-                    />
+                    >
+                        <VIcon icon="mdi-eye-outline" />
+                        <VTooltip activator="parent" location="top">Ver</VTooltip>
+                    </VBtn>
                     <VBtn
                         icon="mdi-pencil-outline"
                         variant="text"
                         size="small"
                         @click="router.visit(edit(item.id).url)"
-                    />
+                    >
+                        <VIcon icon="mdi-pencil-outline" />
+                        <VTooltip activator="parent" location="top">Editar</VTooltip>
+                    </VBtn>
                     <VBtn
                         icon="mdi-trash-can-outline"
                         variant="text"
                         size="small"
                         color="error"
                         @click="askDelete(item)"
-                    />
+                    >
+                        <VIcon icon="mdi-trash-can-outline" />
+                        <VTooltip activator="parent" location="top">Eliminar</VTooltip>
+                    </VBtn>
                 </template>
                 </VDataTableServer>
                 <VDialog v-model="confirmDialog" max-width="420">
