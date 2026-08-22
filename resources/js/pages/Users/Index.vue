@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
-import { index as usersIndex, edit, show } from '@/routes/users';
+import { index as usersIndex, edit, show, destroy, create as usersCreate } from '@/routes/users';
 
 defineOptions({
     layout: {
@@ -89,6 +89,20 @@ const askDelete = (user: UserRow) => {
     confirmDialog.value = true;
 };
 
+const confirmDelete = () => {
+    if (!userToDelete.value) {
+        return;
+    }
+
+    router.delete(destroy(userToDelete.value.id).url, {
+        preserveScroll: true,
+        onFinish: () => {
+            confirmDialog.value = false;
+            userToDelete.value = null;
+        },
+    });
+};
+
 watch(search, (value) => {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(() => {
@@ -110,7 +124,19 @@ watch(search, (value) => {
 
     <div class="app-page">
         <VCard>
-            <VCardTitle>Listado de Usuarios</VCardTitle>
+            <div class="d-flex align-stretch" style="padding: 0;">
+                <VCardTitle class="align-self-center">Listado de Usuarios</VCardTitle>
+                <VBtn
+                    class="ms-auto rounded-0"
+                    color="primary"
+                    prepend-icon="mdi-plus"
+                    :href="usersCreate().url"
+                    style="border-radius: 0;"
+                >
+                    Nuevo
+                </VBtn>
+            </div>
+
             <VDivider />
             <VCardText>
                  <VTextField
@@ -171,7 +197,7 @@ watch(search, (value) => {
                             <VCardActions>
                                 <VSpacer />
                                 <VBtn variant="text" @click="confirmDialog = false">Cancelar</VBtn>
-                                <VBtn color="error" variant="flat">Eliminar</VBtn>
+                                <VBtn color="error" variant="flat" @click="confirmDelete">Eliminar</VBtn>
                             </VCardActions>
                         </VCard>
                     </VDialog>
