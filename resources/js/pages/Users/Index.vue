@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
-import { index as usersIndex } from '@/routes/users';
+import { index as usersIndex, edit, show } from '@/routes/users';
 
 defineOptions({
     layout: {
@@ -39,7 +39,10 @@ interface Filters {
     filters: Filters;
 }>();
 
-const headers = [{ title: 'Nombre', key: 'name' }];
+const headers = [
+    { title: 'Nombre', key: 'name' },
+    { title: 'Acciones', key: 'actions', sortable: false, align: 'end' as const }
+];
 
 const fetchUsers = (params: {
     page: number;
@@ -52,7 +55,7 @@ const fetchUsers = (params: {
         preserveState: true,
         preserveScroll: true,
         replace: true,
-        only: ['users' ,'email', 'filters'],
+        only: ['users' , 'filters'],
     });
 };
 
@@ -126,8 +129,28 @@ watch(search, (value) => {
                     :page="users.current_page"
                     item-value="id"
                     @update:options="onUpdateOptions"
-
-                />
+                >
+                <template v-slot:[`item.actions`]="{ item }">
+                    <VBtn
+                        icon="mdi-eye-outline"
+                        variant="text"
+                        size="small"
+                        @click="router.visit(show(item.id).url)"
+                    />
+                    <VBtn
+                        icon="mdi-pencil-outline"
+                        variant="text"
+                        size="small"
+                        @click="router.visit(edit(item.id).url)"
+                    />
+                    <VBtn
+                        icon="mdi-trash-can-outline"
+                        variant="text"
+                        size="small"
+                        color="error"
+                    />
+                </template>
+                </VDataTableServer>
             </VCardText>
         </VCard>
     </div>
