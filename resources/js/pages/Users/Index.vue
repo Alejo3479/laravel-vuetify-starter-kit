@@ -81,6 +81,14 @@ const onUpdateOptions = ({
 const search = ref<string | null>(props.filters.q ?? '');
 let searchTimeout: ReturnType<typeof setTimeout>;
 
+const confirmDialog = ref(false);
+const userToDelete = ref<UserRow | null>(null);
+
+const askDelete = (user: UserRow) => {
+    userToDelete.value = user;
+    confirmDialog.value = true;
+};
+
 watch(search, (value) => {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(() => {
@@ -148,9 +156,25 @@ watch(search, (value) => {
                         variant="text"
                         size="small"
                         color="error"
+                        @click="askDelete(item)"
                     />
                 </template>
                 </VDataTableServer>
+                <VDialog v-model="confirmDialog" max-width="420">
+                        <VCard>
+                            <VCardTitle>Eliminar usuario</VCardTitle>
+                            <VCardText>
+                                ¿Seguro que querés eliminar el usuario
+                                <strong>{{ userToDelete?.name }}</strong>? Esta acción no
+                                se puede deshacer.
+                            </VCardText>
+                            <VCardActions>
+                                <VSpacer />
+                                <VBtn variant="text" @click="confirmDialog = false">Cancelar</VBtn>
+                                <VBtn color="error" variant="flat">Eliminar</VBtn>
+                            </VCardActions>
+                        </VCard>
+                    </VDialog>
             </VCardText>
         </VCard>
     </div>
