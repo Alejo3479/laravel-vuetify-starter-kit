@@ -28,11 +28,7 @@ class UpdateClienteRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'min:3', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255',
-                Rule::unique('users', 'email')
-                    ->ignore($clienteId)
-                    ->where(function ($query) {
-                        return $query->whereRaw('BINARY email = ?', [$this->email]);
-                    }),
+                Rule::unique('users', 'email')->ignore($clienteId),
             ],
             'password' => ['nullable', 'string', 'min:8', 'max:255'],
             'roles' => ['required','array', 'min:1'],

@@ -26,9 +26,7 @@ class StoreClienteRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255',
-                Rule::unique('users', 'email')->where(function ($query) {
-                    return $query->whereRaw('BINARY email = ?', [$this->email]);
-                }),
+                Rule::unique('users', 'email'),
             ],
             'password' => ['required', 'string', 'min:8'],
             'roles' => ['nullable', 'array', 'min:1'],
