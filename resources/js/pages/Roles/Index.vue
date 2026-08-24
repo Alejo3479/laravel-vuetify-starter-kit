@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { index as rolesIndex, edit, show, destroy, create as rolesCreate } from '@/routes/roles';
 
 defineOptions({
@@ -13,6 +13,21 @@ defineOptions({
         ],
     },
 });
+interface RoleData {
+    id: number;
+    name: string;
+    permission_ids: number[];
+}
+
+interface Permission {
+    id: number;
+    name: string;
+}
+
+interface PermissionGroup {
+    id: number;
+    permissions: Permission[];
+}
 
 interface RoleRow {
     id: number;
@@ -34,9 +49,19 @@ interface Filters {
 }
 
 const props = defineProps<{
-    roles: PaginatedRoles;
-    filters: Filters;
+    roles?: PaginatedRoles;
+    filters?: Filters;
+    action?: 'show' | 'index' | 'create' | 'edit';
+    role?: RoleData;
+    permissionGroups?: PermissionGroup[];
 }>();
+
+const permissionNames = computed(() =>
+    (props.permissionGroups ?? [])
+        .flatMap((group) => group.permissions)
+        .filter((permission) => props.role?.permission_ids.includes(permission.id))
+        .map((permission) => permission.name)
+);
 
 const headers = [
     { title: 'Nombre', key: 'name' },
@@ -76,7 +101,7 @@ const onUpdateOptions = ({
         });
 };
 
-const search = ref<string | null>(props.filters.q ?? '');
+const search = ref<string | null>(props.filters?.q ?? '');
 let searchTimeout: ReturnType<typeof setTimeout>;
 
 const confirmDialog = ref(false);
@@ -106,9 +131,9 @@ watch(search, (value) => {
     searchTimeout = setTimeout(() => {
         fetchRoles({
             page: 1,
-            limit: props.filters.limit ?? 10,
-            sort: props.filters.sort ?? 'name',
-            order: props.filters.order ?? 'asc',
+            limit: props.filters?.limit ?? 10,
+            sort: props.filters?.sort ?? 'name',
+            order: props.filters?.order ?? 'asc',
             q: value ?? '',
         });
     }, 400);
@@ -119,7 +144,7 @@ watch(search, (value) => {
     <Head title="Roles" />
 
     <div class="app-page">
-        <VCard>
+        <VCard v-if="props.action !== 'show'">
             <div class="d-flex align-stretch" style="padding: 0;">
                 <VCardTitle class="align-self-center">Listado de Roles</VCardTitle>
                 <VBtn
@@ -149,15 +174,15 @@ watch(search, (value) => {
 
                 <VDataTableServer
                     :headers="headers"
-                    :items="roles.data"
-                    :items-length="roles.total"
-                    :items-per-page="roles.per_page"
+                    :items="roles?.data ?? []"
+                    :items-length="roles?.total ?? 0"
+                    :items-per-page="roles?.per_page"
                     :items-per-page-options="[
                         { value: 10, title: '10' },
                         { value: 25, title: '25' },
                         { value: 50, title: '50' },
                     ]"
-                    :page="roles.current_page"
+                    :page="roles?.current_page"
                     item-value="id"
                     @update:options="onUpdateOptions"
                     >
@@ -198,6 +223,16 @@ watch(search, (value) => {
                             </VCardActions>
                         </VCard>
                     </VDialog>
+            </VCardText>
+        </VCard>
+        <VCard v-else-if="props.role">
+            <VCardTitle>{{ props.role.name }}</VCardTitle>
+            <VDivider />
+            <VCardText>
+                <p class="text-body-2 mb-2">Permisos:</p>
+                <ul>
+                    <li v-for="name in permissionNames" :key="name">{{ name }}</li>
+                </ul>
             </VCardText>
         </VCard>
     </div>
