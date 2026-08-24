@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import { Head, useForm, setLayoutProps } from '@inertiajs/vue3';
+import { Head, Form, setLayoutProps } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import {
-    index as usersIndex,
-    store as usersStore,
-    update as usersUpdate,
-} from '@/routes/users';
+import UserController from '@/actions/App/Http/Controllers/User/UserController';
+import { index as usersIndex } from '@/routes/users';
 
 interface Role {
     id: number;
@@ -43,21 +40,20 @@ setLayoutProps({
 const showPassword = ref(false);
 const showPasswordConfirmation = ref(false);
 
-const form = useForm({
-    name: props.user?.name ?? '',
-    email: props.user?.email ?? '',
-    password: '',
-    password_confirmation: '',
-    roles: props.user?.role_ids ?? [],
-});
+function setRole(checked: boolean | null, roleId: number) {
+    const isChecked = checked ?? false;
 
-const submit = () => {
-    if (props.action === 'create') {
-        form.post(usersStore().url);
-    } else {
-        form.put(usersUpdate(props.user!.id).url);
-    }
-};
+    roleIds.value = isChecked
+        ? [...roleIds.value, roleId]
+        : roleIds.value.filter((id) => id !== roleId);
+}
+
+const name = ref(props.user?.name ?? '');
+const email = ref(props.user?.email ?? '');
+const password = ref('');
+const passwordConfirmation = ref('');
+const roleIds = ref<number[]>(props.user?.role_ids ?? []);
+
 </script>
 
 <template>
@@ -66,69 +62,89 @@ const submit = () => {
         <VCard>
             <VCardTitle>{{ props.action === 'create' ? 'Nuevo usuario' : 'Editar usuario' }}</VCardTitle>
             <VDivider />
-            <VCardText>
-                <VTextField
-                    v-model="form.name"
-                    label="Nombre"
-                    variant="outlined"
-                    density="compact"
-                    :error-messages="form.errors.name"
-                />
-                <VTextField
-                    v-model="form.email"
-                    label="Email"
-                    variant="outlined"
-                    density="compact"
-                    class="mt-4"
-                    :error-messages="form.errors.email"
-                />
-                <VTextField
-                    v-if="props.action !== 'show'"
-                    v-model="form.password"
-                    label="Contraseña"
-                    :type="showPassword ? 'text' : 'password'"
-                    :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-                    @click:append-inner="showPassword = !showPassword"
-                    variant="outlined"
-                    density="compact"
-                    class="mt-4"
-                    :error-messages="form.errors.password"
-                />
-                <VTextField
-                    v-if="props.action !== 'show'"
-                    v-model="form.password_confirmation"
-                    label="Confirmar contraseña"
-                    :type="showPasswordConfirmation ? 'text' : 'password'"
-                    :append-inner-icon="showPasswordConfirmation ? 'mdi-eye-off' : 'mdi-eye'"
-                    @click:append-inner="showPasswordConfirmation = !showPasswordConfirmation"
-                    variant="outlined"
-                    density="compact"
-                    class="mt-4"
-                    :error-messages="form.errors.password_confirmation"
-                />
-                <div class="mt-4">
-                    <p class="text-body-2 mb-2">Roles</p>
-                    <VCheckbox
-                        v-for="role in roles"
-                        :key="role.id"
-                        v-model="form.roles"
-                        :label="role.name"
-                        :value="role.id"
+            <Form
+                v-bind="action === 'edit' && props.user ? UserController.update.form(props.user.id) : UserController.store.form()"
+                :transform="(data) => ({ ...data, roles: Array.isArray(data.roles) ? data.roles.map(Number) : [] })"
+                reset-on-success
+                v-slot="{ errors, processing }"
+                :key="user?.id ?? 'new'"
+            >
+                <VCardText>
+                    <VTextField
+                        name="name"
+                        v-model="name"
+                        label="Nombre"
+                        variant="outlined"
                         density="compact"
-                        hide-details
-                        :disabled="props.action === 'show'"
+                        :error-messages="errors.name"
                     />
-                </div>
-                <VBtn
-                    v-if="props.action !== 'show'"
-                    class="mt-4"
-                    color="primary"
-                    :loading="form.processing"
-                    @click="submit"
-                >
-                    Guardar
-                </VBtn>
-            </VCardText>
+                    <VTextField
+                        name="email"
+                        v-model="email"
+                        label="Email"
+                        variant="outlined"
+                        density="compact"
+                        class="mt-4"
+                        :error-messages="errors.email"
+                    />
+                    <VTextField
+                        name="password"
+                        v-if="props.action !== 'show'"
+                        v-model="password"
+                        label="Contraseña"
+                        :type="showPassword ? 'text' : 'password'"
+                        :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+                        @click:append-inner="showPassword = !showPassword"
+                        variant="outlined"
+                        density="compact"
+                        class="mt-4"
+                        :error-messages="errors.password"
+                    />
+                    <VTextField
+                        name="password_confirmation"
+                        v-if="props.action !== 'show'"
+                        v-model="passwordConfirmation"
+                        label="Confirmar contraseña"
+                        :type="showPasswordConfirmation ? 'text' : 'password'"
+                        :append-inner-icon="showPasswordConfirmation ? 'mdi-eye-off' : 'mdi-eye'"
+                        @click:append-inner="showPasswordConfirmation = !showPasswordConfirmation"
+                        variant="outlined"
+                        density="compact"
+                        class="mt-4"
+                        :error-messages="errors.password_confirmation"
+                    />
+                    <div class="mt-4">
+                        <p class="text-body-2 mb-2">Roles</p>
+                        <VCheckbox
+                            v-for="role in roles"
+                            :key="role.id"
+                            :label="role.name"
+                            density="compact"
+                            hide-details
+                            :disabled="props.action === 'show'"
+                            :model-value="roleIds.includes(role.id)"
+                            @update:model-value="(checked: boolean | null) => setRole(checked, role.id)"
+                        />
+                        <input
+                            v-for="id in roleIds"
+                            :key="id"
+                            type="hidden"
+                            name="roles[]"
+                            :value="id"
+                        />
+                    </div>
+                    <VBtn
+                        v-if="props.action !== 'show'"
+                        class="mt-4"
+                        color="primary"
+                        :loading="processing"
+                        type="submit"
+                        :disabled="processing"
+                    >
+                        Guardar
+                    </VBtn>
+                </VCardText>
+            </Form>
         </VCard>
     </div>
 </template>
