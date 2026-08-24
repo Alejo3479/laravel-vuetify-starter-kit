@@ -72,7 +72,8 @@ class ClienteController extends Controller
             return to_route('clientes.index');
 
         } catch (\Exception $e) {
-            Inertia::flash('toast', ['type' => 'error', 'message' => 'Hubo un error al intentar crear el cliente.']);
+            $message = sprintf('Hubo un error al intentar crear el cliente: %s', $e->getMessage());
+            Inertia::flash('toast', ['type' => 'error', 'message' => $message]);
             return redirect()->back();
         }
     }
@@ -140,7 +141,8 @@ class ClienteController extends Controller
             return to_route('clientes.index');
 
         } catch (\Exception $e) {
-            Inertia::flash('toast', ['type' => 'error', 'message' =>  'Hubo un error al actualizar el cliente.']);
+            $message = sprintf('Hubo un error al actualizar el cliente: %s', $e->getMessage());
+            Inertia::flash('toast', ['type' => 'error', 'message' => $message]);
             return redirect()->back();
         }
     }
@@ -162,7 +164,8 @@ class ClienteController extends Controller
             return to_route('clientes.index');
 
         } catch (\Exception $e) {
-            Inertia::flash('toast', ['type' => 'error','message' => 'Hubo un error al intentar eliminar el cliente.']);
+            $message = sprintf('Hubo un error al intentar eliminar el cliente: %s', $e->getMessage());
+            Inertia::flash('toast', ['type' => 'error','message' => $message]);
             return redirect()->back();
         }
     }
