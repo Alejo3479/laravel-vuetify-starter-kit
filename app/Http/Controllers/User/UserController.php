@@ -72,7 +72,8 @@ class UserController extends Controller
             return to_route('users.index');
 
         } catch (\Exception $e) {
-            Inertia::flash('toast', ['type' => 'error', 'message' => 'Hubo un error al intentar crear el usuario.']);
+            $message = sprintf('Hubo un error al intentar crear el usuario: %s', $e->getMessage());
+            Inertia::flash('toast', ['type' => 'error', 'message' => $message]);
             return redirect()->back();
         }
     }
@@ -143,7 +144,8 @@ class UserController extends Controller
             return to_route('users.index');
 
         } catch (\Exception $e) {
-            Inertia::flash('toast', ['type' => 'error', 'message' =>  'Hubo un error al actualizar el usuario.']);
+            $message = sprintf('Hubo un error al intentar actualizar el usuario: %s', $e->getMessage());
+            Inertia::flash('toast', ['type' => 'error', 'message' => $message]);
             return redirect()->back();
         }
     }
@@ -165,7 +167,8 @@ class UserController extends Controller
             return to_route('users.index');
 
         } catch (\Exception $e) {
-            Inertia::flash('toast', ['type' => 'error','message' => 'Hubo un error al intentar eliminar el usuario.']);
+            $message = sprintf('Hubo un error al intentar eliminar el usuario: %s', $e->getMessage());
+            Inertia::flash('toast', ['type' => 'error','message' => $message]);
             return redirect()->back();
         }
     }
