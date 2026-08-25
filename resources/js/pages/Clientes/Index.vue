@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
-import { index as clientesIndex, edit, show, destroy } from '@/routes/clientes';
+import { index as clientesIndex, edit, show, destroy, create as clientesCreate } from '@/routes/clientes';
 
 defineOptions({
     layout: {
@@ -124,7 +124,18 @@ const confirmDelete = () => {
 
     <div class="app-page">
         <VCard>
-            <VCardTitle>Listado de Clientes</VCardTitle>
+            <div class="d-flex align-stretch" style="padding: 0;">
+                <VCardTitle>Listado de Clientes</VCardTitle>
+                <VBtn
+                    class="ms-auto rounded-0"
+                    color="primary"
+                    prepend-icon="mdi-plus"
+                    :href="clientesCreate().url"
+                    style="border-radius: 0;"
+                >
+                    Nuevo
+                </VBtn>
+            </div>
             <VDivider />
             <VCardText>
                 <VTextField
