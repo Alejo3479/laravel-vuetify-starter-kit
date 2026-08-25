@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
+import { ref, watch } from 'vue';
 import { index as clientesIndex } from '@/routes/clientes';
 
 defineOptions({
@@ -33,12 +34,27 @@ interface Filters {
     limit: number | null;
 }
 
-defineProps<{
+const props = defineProps<{
     clientes: PaginatedClientes;
     filters: Filters;
 }>();
 
 const headers = [{ title: 'Nombre', key: 'name' }];
+
+const fetchClientes = (params: {
+    page: number;
+    limit: number;
+    sort: string;
+    order: 'asc' | 'desc';
+    q: string;
+}) => {
+    router.get(clientesIndex().url, params, {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+        only: ['clientes', 'filters'],
+    });
+};
 
 const onUpdateOptions = ({
     page,
@@ -49,17 +65,30 @@ const onUpdateOptions = ({
     itemsPerPage: number;
     sortBy: { key: string; order: 'asc' | 'desc' }[];
 }) => {
-    router.get(
-        clientesIndex().url,
-        {
+        fetchClientes({
             page,
             limit: itemsPerPage,
             sort: sortBy[0]?.key ?? 'name',
             order: sortBy[0]?.order ?? 'asc',
-        },
-        { preserveState: true, preserveScroll: true, replace: true, only: ['clientes', 'filters'] },
-    );
+        q: search.value ?? '',
+    });
 };
+
+const search = ref<string | null>(props.filters.q ?? '');
+let searchTimeout: ReturnType<typeof setTimeout>;
+
+watch(search, (value) => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        fetchClientes({
+            page: 1,
+            limit: props.filters.limit ?? 10,
+            sort: props.filters.sort ?? 'name',
+            order: props.filters.order ?? 'asc',
+            q: value ?? '',
+        });
+    }, 400);
+});
 
 </script>
 
@@ -71,7 +100,18 @@ const onUpdateOptions = ({
             <VCardTitle>Listado de Clientes</VCardTitle>
             <VDivider />
             <VCardText>
-                <VDataTable
+                <VTextField
+                    v-model="search"
+                    label="Buscar por nombre o correo"
+                    prepend-inner-icon="mdi-magnify"
+                    placeholder="Administrador"
+                    density="compact"
+                    variant="outlined"
+                    clearable
+                    hide-details
+                    class="mb-4"
+                />
+                <VDataTableServer
                     :headers="headers"
                     :items="clientes.data"
                     :items-length="clientes.total"
