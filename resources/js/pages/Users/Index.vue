@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
+import { Head, router, setLayoutProps } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
 import { index as usersIndex, edit, show, destroy, create as usersCreate } from '@/routes/users';
 
-defineOptions({
-    layout: {
-        breadcrumbs: [
-            {
-                title: 'Usuarios',
-                href: usersIndex(),
-            },
-        ],
-    },
+setLayoutProps({
+    breadcrumbs: [
+        {
+            title: 'Usuarios',
+            href: usersIndex(),
+        },
+    ],
 });
 
 interface UserRow {

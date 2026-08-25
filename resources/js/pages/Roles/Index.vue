@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
+import { Head, router, setLayoutProps } from '@inertiajs/vue3';
 import { ref, watch, computed } from 'vue';
 import { index as rolesIndex, edit, show, destroy, create as rolesCreate } from '@/routes/roles';
 
-defineOptions({
-    layout: {
-        breadcrumbs: [
-            {
-                title: 'Roles',
-                href: rolesIndex(),
-            },
-        ],
-    },
+setLayoutProps({
+    breadcrumbs: [
+        {
+            title: 'Roles',
+            href: rolesIndex(),
+        },
+    ],
 });
 interface RoleData {
     id: number;

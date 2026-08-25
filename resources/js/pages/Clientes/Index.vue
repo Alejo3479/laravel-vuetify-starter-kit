@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
+import { Head, router, setLayoutProps } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
 import { index as clientesIndex, edit, show, destroy, create as clientesCreate } from '@/routes/clientes';
 
-defineOptions({
-    layout: {
-        breadcrumbs: [
-            {
-                title: 'Clientes',
-                href: clientesIndex(),
-            },
-        ],
-    },
+setLayoutProps({
+    breadcrumbs: [
+        {
+            title: 'Clientes',
+            href: clientesIndex(),
+        },
+    ],
 });
 
 interface ClienteRow {
