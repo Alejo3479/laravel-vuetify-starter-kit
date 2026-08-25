@@ -39,7 +39,8 @@ interface Filters {
 
 const headers = [
     { title: 'Nombre', key: 'name' },
-    { title: 'Acciones', key: 'actions', sortable: false, align: 'end' as const }
+    { title: 'Correo', key: 'email' },
+    { title: 'Acciones', key: 'actions', align: 'center' as const },
 ];
 
 const fetchUsers = (params: {
@@ -149,7 +150,8 @@ watch(search, (value) => {
                     class="mb-4"
                 />
                 <VDataTableServer
-                :headers="headers"
+                    density="compact"
+                    :headers="headers"
                     :items="users.data"
                     :items-length="users.total"
                     :items-per-page="users.per_page"
@@ -162,6 +164,18 @@ watch(search, (value) => {
                     item-value="id"
                     @update:options="onUpdateOptions"
                 >
+                <template #headers="{ columns }">
+                    <tr>
+                        <th
+                            v-for="column in columns"
+                            :key="column.key ?? column.title"
+                            class="font-weight-bold"
+                            :class="{ 'text-center': column.key === 'actions' }"
+                        >
+                            {{ column.title }}
+                        </th>
+                    </tr>
+                </template>
                 <template v-slot:[`item.actions`]="{ item }">
                     <VBtn
                         icon="mdi-eye-outline"
