@@ -245,12 +245,12 @@ watch(
                             <Link
                                 v-if="item.href"
                                 :href="item.href"
-                                class="text-decoration-none"
+                                class="text-decoration-none font-weight-bold"
                             >
                                 {{ item.title }}
                             </Link>
 
-                            <span v-else>
+                            <span v-else class="font-weight-bold">
                                 {{ item.title }}
                             </span>
                         </template>

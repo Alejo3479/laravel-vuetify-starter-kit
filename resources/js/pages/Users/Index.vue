@@ -115,7 +115,6 @@ watch(search, (value) => {
     }, 400);
 });
 
-
 </script>
 
 <template>
@@ -124,7 +123,6 @@ watch(search, (value) => {
     <div class="app-page">
         <VCard>
             <div class="d-flex align-stretch" style="padding: 0;">
-                <VCardTitle class="align-self-center">Listado de Usuarios</VCardTitle>
                 <VBtn
                     class="ms-auto rounded-0"
                     color="primary"
