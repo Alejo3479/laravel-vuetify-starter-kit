@@ -11,6 +11,7 @@ import { edit as editProfile } from '@/routes/profile';
 import { index as rolesIndex } from '@/routes/roles';
 import { index as usersIndex } from '@/routes/users';
 import type { BreadcrumbItem, NavItem } from '@/types';
+import { index as cientesIndex } from '@/routes/clientes';
 
 type Props = {
     breadcrumbs?: BreadcrumbItem[];
@@ -62,6 +63,11 @@ const mainNavItems: NavItem[] = [
         title: 'Usuarios',
         href: usersIndex(),
         icon: 'mdi-account-badge-outline',
+    },
+    {
+        title: 'Clientes',
+        href: cientesIndex(),
+        icon: 'mdi-account-multiple',
     },
 ];
 
