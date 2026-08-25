@@ -75,6 +75,14 @@ const onUpdateOptions = ({
                     :headers="headers"
                     :items="clientes.data"
                     :items-length="clientes.total"
+                    :items-per-page="clientes.per_page"
+                    :items-per-page-options="[
+                        { value: 10, title: '10' },
+                        { value: 25, title: '25' },
+                        { value: 50, title: '50' },
+                    ]"
+                    :page="clientes.current_page"
+                    item-value="id"
                     @update:options="onUpdateOptions"
                 />
             </VCardText>
