@@ -144,7 +144,6 @@ watch(search, (value) => {
     <div class="app-page">
         <VCard v-if="props.action !== 'show'">
             <div class="d-flex align-stretch" style="padding: 0;">
-                <VCardTitle class="align-self-center">Listado de Roles</VCardTitle>
                 <VBtn
                     class="ms-auto rounded-0"
                     color="primary"

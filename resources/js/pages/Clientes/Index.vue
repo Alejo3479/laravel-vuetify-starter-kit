@@ -124,7 +124,6 @@ const confirmDelete = () => {
     <div class="app-page">
         <VCard>
             <div class="d-flex align-stretch" style="padding: 0;">
-                <VCardTitle>Listado de Clientes</VCardTitle>
                 <VBtn
                     class="ms-auto rounded-0"
                     color="primary"
