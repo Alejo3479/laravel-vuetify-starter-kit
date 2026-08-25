@@ -63,7 +63,7 @@ const permissionNames = computed(() =>
 
 const headers = [
     { title: 'Nombre', key: 'name' },
-    { title: 'Acciones', key: 'actions', sortable: false, align: 'end' as const },
+    { title: 'Acciones', key: 'actions', sortable: false, align: 'center' as const, width: '250px' },
 ];
 
 const fetchRoles = (params: {
@@ -171,6 +171,7 @@ watch(search, (value) => {
                 />
 
                 <VDataTableServer
+                    density="compact"
                     :headers="headers"
                     :items="roles?.data ?? []"
                     :items-length="roles?.total ?? 0"
@@ -184,26 +185,47 @@ watch(search, (value) => {
                     item-value="id"
                     @update:options="onUpdateOptions"
                     >
+                    <template #headers="{ columns }">
+                        <tr>
+                            <th
+                                v-for="column in columns"
+                                :key="column.key ?? column.title"
+                                class="font-weight-bold"
+                                :class="{ 'text-center': column.key === 'actions' }"
+                            >
+                                {{ column.title }}
+                            </th>
+                        </tr>
+                    </template>
                     <template v-slot:[`item.actions`]="{ item }">
                         <VBtn
                         icon="mdi-eye-outline"
                         variant="text"
                         size="small"
                         @click="router.visit(show(item.id).url)"
-                        />
+                        >
+                            <VIcon icon="mdi-eye-outline" />
+                            <VTooltip activator="parent" location="top">Ver</VTooltip>
+                        </VBtn>
                         <VBtn
                         icon="mdi-pencil-outline"
                         variant="text"
                         size="small"
                         @click="router.visit(edit(item.id).url)"
-                        />
+                        >
+                            <VIcon icon="mdi-pencil-outline" />
+                            <VTooltip activator="parent" location="top">Editar</VTooltip>
+                        </VBtn>
                         <VBtn
                             icon="mdi-trash-can-outline"
                             variant="text"
                             size="small"
                             color="error"
                             @click="askDelete(item)"
-                            />
+                            >
+                            <VIcon icon="mdi-trash-can-outline" />
+                            <VTooltip activator="parent" location="top">Eliminar</VTooltip>
+                        </VBtn>
                         </template>
                     </VDataTableServer>
                     <VDialog v-model="confirmDialog" max-width="420">

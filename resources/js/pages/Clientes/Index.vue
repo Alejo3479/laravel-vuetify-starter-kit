@@ -39,7 +39,8 @@ const props = defineProps<{
 
 const headers = [
     { title: 'Nombre', key: 'name' },
-    { title: 'Acciones', key: 'actions', sortable: false, align: 'end' as const }
+    { title: 'Correo', key: 'email' },
+    { title: 'Acciones', key: 'actions', sortable: false, align: 'center' as const }
 ];
 
 const fetchClientes = (params: {
@@ -148,6 +149,7 @@ const confirmDelete = () => {
                     class="mb-4"
                 />
                 <VDataTableServer
+                    density="compact"
                     :headers="headers"
                     :items="clientes.data"
                     :items-length="clientes.total"
@@ -161,6 +163,18 @@ const confirmDelete = () => {
                     item-value="id"
                     @update:options="onUpdateOptions"
                 >
+                <template #headers="{ columns }">
+                    <tr>
+                        <th
+                            v-for="column in columns"
+                            :key="column.key ?? column.title"
+                            class="font-weight-bold"
+                            :class="{ 'text-center': column.key === 'actions' }"
+                        >
+                            {{ column.title }}
+                        </th>
+                    </tr>
+                </template>
                     <template v-slot:[`item.actions`]="{ item }">
                     <VBtn
                         icon="mdi-eye-outline"
