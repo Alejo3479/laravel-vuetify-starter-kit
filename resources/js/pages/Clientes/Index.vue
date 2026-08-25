@@ -12,10 +12,37 @@ defineOptions({
         ],
     },
 });
+
+interface ClienteRow {
+    id: number;
+    name: string;
+    email: string;
+}
+
+interface PaginatedClientes {
+    data: ClienteRow[];
+    current_page: number;
+    per_page: number;
+    total: number;
+}
+
+interface Filters {
+    q: string | null;
+    sort: string | null;
+    order: 'asc' | 'desc' | null;
+    limit: number | null;
+}
+
+defineProps<{
+    clientes: PaginatedClientes;
+    filters: Filters;
+}>();
+
+
 </script>
 
 <template>
-    <Head title="Roles" />
+    <Head title="Clientes" />
 
     <div class="app-page">
         <VCard>
