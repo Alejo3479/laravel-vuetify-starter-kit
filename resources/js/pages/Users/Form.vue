@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Form, setLayoutProps } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import clientesController from '@/actions/App/Http/Controllers/Cliente/ClienteController';
 import UserController from '@/actions/App/Http/Controllers/User/UserController';
 import { index as usersIndex } from '@/routes/users';
 import { index as clientesIndex } from '@/routes/clientes';
@@ -54,7 +55,10 @@ const name = ref(props.user?.name ?? '');
 const email = ref(props.user?.email ?? '');
 const password = ref('');
 const passwordConfirmation = ref('');
-const roleIds = ref<number[]>(props.user?.role_ids ?? []);
+const roleIds = ref<number[]>(
+    props.action === 'create' && props.cliente
+    ? props.roles.map((role) => role.id)
+    : props.user?.role_ids ?? []);
 
 </script>
 
@@ -65,7 +69,15 @@ const roleIds = ref<number[]>(props.user?.role_ids ?? []);
             <VCardTitle>{{ props.action === 'create' ? 'Nuevo usuario' : 'Editar usuario' }}</VCardTitle>
             <VDivider />
             <Form
-                v-bind="action === 'edit' && props.user ? UserController.update.form(props.user.id) : UserController.store.form()"
+                v-bind="action === 'edit' && props.user
+                    ? (props.cliente
+                        ? clientesController.update.form(props.user.id)
+                        : UserController.update.form(props.user.id)
+                    )
+                    : (props.cliente
+                        ? clientesController.store.form()
+                        : UserController.store.form()
+                    )"
                 :transform="(data) => ({ ...data, roles: Array.isArray(data.roles) ? data.roles.map(Number) : [] })"
                 reset-on-success
                 v-slot="{ errors, processing }"
@@ -123,7 +135,7 @@ const roleIds = ref<number[]>(props.user?.role_ids ?? []);
                             :label="role.name"
                             density="compact"
                             hide-details
-                            :disabled="props.action === 'show'"
+                            :disabled="props.action === 'show' || (props.cliente && props.action === 'create')"
                             :model-value="roleIds.includes(role.id)"
                             @update:model-value="(checked: boolean | null) => setRole(checked, role.id)"
                         />
