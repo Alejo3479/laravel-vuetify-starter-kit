@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
-import { index as clientesIndex, edit, show } from '@/routes/clientes';
+import { index as clientesIndex, edit, show, destroy } from '@/routes/clientes';
 
 defineOptions({
     layout: {
@@ -93,6 +93,30 @@ watch(search, (value) => {
     }, 400);
 });
 
+// mensaje de confirmacion al eiminar registro
+const confirmDialog = ref(false);
+const userToDelete = ref<ClienteRow | null>(null);
+
+const askDelete = (user: ClienteRow) => {
+    userToDelete.value = user;
+    confirmDialog.value = true;
+};
+
+// Elimna un registro de Clieente
+const confirmDelete = () => {
+    if (!userToDelete.value) {
+        return;
+    }
+
+    router.delete(destroy(userToDelete.value.id).url, {
+        preserveScroll: true,
+        onFinish: () => {
+            confirmDialog.value = false;
+            userToDelete.value = null;
+        },
+    });
+};
+
 </script>
 
 <template>
@@ -146,9 +170,25 @@ watch(search, (value) => {
                         variant="text"
                         size="small"
                         color="error"
+                        @click="askDelete(item)"
                     />
                 </template>
                 </VDataTableServer>
+                <VDialog v-model="confirmDialog" max-width="420">
+                    <VCard>
+                        <VCardTitle>Eliminar cliente</VCardTitle>
+                        <VCardText>
+                            ¿Seguro que querés eliminar el cliente
+                            <strong>{{ userToDelete?.name }}</strong>? Esta acción no
+                            se puede deshacer.
+                        </VCardText>
+                        <VCardActions>
+                            <VSpacer />
+                            <VBtn variant="text" @click="confirmDialog = false">Cancelar</VBtn>
+                            <VBtn color="error" variant="flat" @click="confirmDelete">Eliminar</VBtn>
+                        </VCardActions>
+                    </VCard>
+                </VDialog>
             </VCardText>
         </VCard>
     </div>
