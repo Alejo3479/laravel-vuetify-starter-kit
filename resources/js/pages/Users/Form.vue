@@ -3,6 +3,7 @@ import { Head, Form, setLayoutProps } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import UserController from '@/actions/App/Http/Controllers/User/UserController';
 import { index as usersIndex } from '@/routes/users';
+import { index as clientesIndex } from '@/routes/clientes';
 
 interface Role {
     id: number;
@@ -20,13 +21,14 @@ const props = defineProps<{
     action: 'create' | 'edit' | 'show';
     roles: Role[];
     user?: UserData;
+    cliente: boolean;
 }>();
 
 setLayoutProps({
     breadcrumbs: [
         {
-            title: 'Usuarios',
-            href: usersIndex(),
+            title: props.cliente ? 'Clientes' : 'Usuarios',
+            href: props.cliente ? clientesIndex() : usersIndex(),
         },
         {
             title:
