@@ -11,7 +11,7 @@ import { edit as editProfile } from '@/routes/profile';
 import { index as rolesIndex } from '@/routes/roles';
 import { index as usersIndex } from '@/routes/users';
 import type { BreadcrumbItem, NavItem } from '@/types';
-import { index as cientesIndex } from '@/routes/clientes';
+import { index as clientesIndex } from '@/routes/clientes';
 
 type Props = {
     breadcrumbs?: BreadcrumbItem[];
@@ -66,7 +66,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Clientes',
-        href: cientesIndex(),
+        href: clientesIndex(),
         icon: 'mdi-account-multiple',
     },
 ];
