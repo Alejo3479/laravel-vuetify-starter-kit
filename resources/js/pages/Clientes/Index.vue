@@ -123,30 +123,28 @@ const confirmDelete = () => {
 
     <div class="app-page">
         <VCard>
-            <div class="d-flex align-stretch" style="padding: 0;">
-                <VBtn
-                    class="ms-auto rounded-0"
-                    color="primary"
-                    prepend-icon="mdi-plus"
-                    :href="clientesCreate().url"
-                    style="border-radius: 0;"
-                >
-                    Nuevo
-                </VBtn>
-            </div>
-            <VDivider />
             <VCardText>
-                <VTextField
-                    v-model="search"
-                    label="Buscar por nombre o correo"
-                    prepend-inner-icon="mdi-magnify"
-                    placeholder="Administrador"
-                    density="compact"
-                    variant="outlined"
-                    clearable
-                    hide-details
-                    class="mb-4"
-                />
+                <div class="d-flex flex-column flex-md-row align-md-center ga-4 mb-4">
+                    <VTextField
+                        v-model="search"
+                        label="Buscar por nombre o correo"
+                        prepend-inner-icon="mdi-magnify"
+                        placeholder="Administrador"
+                        density="compact"
+                        variant="outlined"
+                        clearable
+                        hide-details
+                        class="order-2 order-md-1 grow"
+                    />
+                    <VBtn
+                        class="order-1 order-md-2 w-100 w-md-auto"
+                        color="primary"
+                        prepend-icon="mdi-plus"
+                        :href="clientesCreate().url"
+                    >
+                        Nuevo
+                    </VBtn>
+                </div>
                 <VDataTableServer
                     density="compact"
                     :headers="headers"

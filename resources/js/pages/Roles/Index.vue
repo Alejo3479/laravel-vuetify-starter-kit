@@ -143,20 +143,8 @@ watch(search, (value) => {
 
     <div class="app-page">
         <VCard v-if="props.action !== 'show'">
-            <div class="d-flex align-stretch" style="padding: 0;">
-                <VBtn
-                    class="ms-auto rounded-0"
-                    color="primary"
-                    prepend-icon="mdi-plus"
-                    :href="rolesCreate().url"
-                    style="border-radius: 0;"
-                >
-                    Nuevo
-                </VBtn>
-            </div>
-            <VDivider />
-            <VCardText>
-
+        <VCardText>
+            <div class="d-flex flex-column flex-md-row align-md-center ga-4 mb-4">
                 <VTextField
                     v-model="search"
                     label="Buscar por nombre"
@@ -166,8 +154,18 @@ watch(search, (value) => {
                     variant="outlined"
                     clearable
                     hide-details
-                    class="mb-4"
+                    class="order-2 order-md-1 grow"
                 />
+                <VBtn
+                    class="order-1 order-md-2 w-100 w-md-auto"
+                    color="primary"
+                    prepend-icon="mdi-plus"
+                    :href="rolesCreate().url"
+                >
+                    Nuevo
+                </VBtn>
+            </div>
+
 
                 <VDataTableServer
                     density="compact"
