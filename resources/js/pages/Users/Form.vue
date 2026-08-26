@@ -3,8 +3,8 @@ import { Head, Form, setLayoutProps } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import clientesController from '@/actions/App/Http/Controllers/Cliente/ClienteController';
 import UserController from '@/actions/App/Http/Controllers/User/UserController';
-import { index as usersIndex } from '@/routes/users';
 import { index as clientesIndex } from '@/routes/clientes';
+import { index as usersIndex } from '@/routes/users';
 
 interface Role {
     id: number;
@@ -66,8 +66,7 @@ const roleIds = ref<number[]>(
     <Head :title="props.action === 'create' ? 'Nuevo usuario' : 'Editar usuario'" />
     <div class="app-page">
         <VCard>
-            <VCardTitle>{{ props.action === 'create' ? 'Nuevo usuario' : 'Editar usuario' }}</VCardTitle>
-            <VDivider />
+            <VCardTitle>{{ props.user?.name ?? '' }}</VCardTitle>
             <Form
                 v-bind="action === 'edit' && props.user
                     ? (props.cliente
@@ -88,6 +87,7 @@ const roleIds = ref<number[]>(
                         name="name"
                         v-model="name"
                         label="Nombre"
+                        :disabled="props.action === 'show'"
                         variant="outlined"
                         density="compact"
                         :error-messages="errors.name"
@@ -96,6 +96,7 @@ const roleIds = ref<number[]>(
                         name="email"
                         v-model="email"
                         label="Email"
+                        :disabled="props.action === 'show'"
                         variant="outlined"
                         density="compact"
                         class="mt-4"
@@ -128,17 +129,17 @@ const roleIds = ref<number[]>(
                         :error-messages="errors.password_confirmation"
                     />
                     <div class="mt-4">
-                        <p class="text-body-2 mb-2">Roles</p>
-                        <VCheckbox
-                            v-for="role in roles"
-                            :key="role.id"
-                            :label="role.name"
-                            density="compact"
-                            hide-details
-                            :disabled="props.action === 'show' || (props.cliente && props.action === 'create')"
-                            :model-value="roleIds.includes(role.id)"
-                            @update:model-value="(checked: boolean | null) => setRole(checked, role.id)"
-                        />
+                        <template v-for="role in roles" :key="role.id">
+                            <VCheckbox
+                                v-if="!(role.name === 'Cliente' && (props.action === 'create' || props.cliente))"
+                                :label="role.name"
+                                density="compact"
+                                hide-details
+                                :disabled="props.action === 'show' || (props.cliente && props.action === 'create')"
+                                :model-value="roleIds.includes(role.id)"
+                                @update:model-value="(checked: boolean | null) => setRole(checked, role.id)"
+                            />
+                        </template>
                         <input
                             v-for="id in roleIds"
                             :key="id"
