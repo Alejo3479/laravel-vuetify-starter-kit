@@ -3,14 +3,13 @@ import { Head, Form, setLayoutProps } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import clientesController from '@/actions/App/Http/Controllers/Cliente/ClienteController';
 import UserController from '@/actions/App/Http/Controllers/User/UserController';
-import { index as usersIndex } from '@/routes/users';
 import { index as clientesIndex } from '@/routes/clientes';
+import { index as usersIndex } from '@/routes/users';
 
 interface Role {
     id: number;
     name: string;
 }
-
 interface UserData {
     id: number;
     name: string;
@@ -59,6 +58,10 @@ const roleIds = ref<number[]>(
     props.action === 'create' && props.cliente
     ? props.roles.map((role) => role.id)
     : props.user?.role_ids ?? []);
+
+function goBack() {
+    window.history.back();
+}
 
 </script>
 
@@ -147,16 +150,27 @@ const roleIds = ref<number[]>(
                             :value="id"
                         />
                     </div>
-                    <VBtn
-                        v-if="props.action !== 'show'"
-                        class="mt-4"
-                        color="primary"
-                        :loading="processing"
-                        type="submit"
-                        :disabled="processing"
-                    >
-                        Guardar
-                    </VBtn>
+                    <div class="d-flex flex-column flex-md-row align-md-center justify-end ga-4 mb-4">
+                        <VBtn
+                            v-if="props.action !== 'show'"
+                            class="mt-4"
+                            color="info"
+                            :loading="processing"
+                            type="submit"
+                            :disabled="processing"
+                        >
+                            Guardar
+                        </VBtn>
+                        <VBtn
+                            v-if="props.action !== 'show'"
+                            class="mt-4"
+                            color="error"
+                            type="button"
+                            @click="goBack"
+                        >
+                            Cancelar
+                        </VBtn>
+                    </div>
                 </VCardText>
             </Form>
         </VCard>
