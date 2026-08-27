@@ -138,7 +138,6 @@ watch(search, (value) => {
                     />
                     <VBtn
                         class="order-1 order-md-2 w-100 w-md-auto"
-                        color="primary"
                         prepend-icon="mdi-plus"
                         :href="props.type === 'usuario' ? userCreate().url : clientesCreate().url"
                     >
