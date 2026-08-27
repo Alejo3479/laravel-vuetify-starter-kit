@@ -4,7 +4,7 @@ import { ref } from 'vue';
 import RoleController from '@/actions/App/Http/Controllers/Role/RoleController';
 import { index as rolesIndex } from '@/routes/roles';
 
-interface RoleData {
+interface Payload {
     id: number;
     name: string;
     permission_ids: number[];
@@ -25,7 +25,7 @@ interface PermissionGroup {
 const props = defineProps<{
     action: 'create' | 'edit' | 'show';
     permissionGroups: PermissionGroup[];
-    role?: RoleData;
+    payload?: Payload;
 }>();
 
 setLayoutProps({
@@ -38,7 +38,7 @@ setLayoutProps({
             title:
                 props.action === 'create'
                     ? 'Nuevo'
-                    : props.role?.name ?? 'Editar',
+                    : props.payload?.name ?? 'Editar',
         },
     ],
 });
@@ -49,8 +49,8 @@ function setPermission(event: Event, permissionId: number) {
 
 const selectedGroup = ref(props.permissionGroups[0]?.id ?? null);
 
-const name = ref(props.role?.name ?? '');
-const permissionIds = ref<number[]>(props.role?.permission_ids ?? []);
+const name = ref(props.payload?.name ?? '');
+const permissionIds = ref<number[]>(props.payload?.permission_ids ?? []);
 
 function goBack() {
     window.history.back();
@@ -64,12 +64,12 @@ function goBack() {
             <VCardTitle>{{ props.action === 'create' ? 'Nuevo rol' : 'Editar rol' }}</VCardTitle>
             <VDivider />
             <Form
-                v-bind="action === 'edit' && props.role ? RoleController.update.form(props.role.id) : RoleController.store.form()"
+                v-bind="action === 'edit' && props.payload ? RoleController.update.form(props.payload.id) : RoleController.store.form()"
                 :options="{ preserveScroll: true }"
                 :transform="(data) => ({ ...data, permissions: Array.isArray(data.permissions) ? data.permissions.map(Number) : [] })"
                 reset-on-success
                 v-slot="{ errors, processing }"
-                :key="role?.id ?? 'new'"
+                :key="props.payload?.id ?? 'new'"
             >
                 <VCardText>
                     <VTextField
@@ -79,6 +79,7 @@ function goBack() {
                         variant="outlined"
                         density="compact"
                         v-model="name"
+                        :readonly="props.action === 'show'"
                     />
                     <div class="mt-4">
                         <p class="text-body-2 mb-2">Permisos</p>
@@ -107,6 +108,7 @@ function goBack() {
                                     hide-details
                                     :model-value="permissionIds.includes(permission.id)"
                                     @change="(e: Event) => setPermission(e, permission.id)"
+                                    :readonly="props.action === 'show'"
                                 />
                             </VWindowItem>
                         </VWindow>
@@ -118,26 +120,22 @@ function goBack() {
                             :value="id"
                         />
                     </div>
-                    <div class="d-flex flex-column flex-md-row align-md-center justify-end ga-4 mb-4">
+                    <div class="d-flex flex-column flex-md-row align-md-center justify-end ga-4 my-4">
                         <VBtn
-                            type="submit"
-                            class="mt-4"
-                            color="info"
-                            :loading="processing"
-                            :disabled="processing"
-                        >
-                            Guardar
-                        </VBtn>
-                        <VBtn
-                            type="submit"
-                            class="mt-4"
-                            color="error"
                             :loading="processing"
                             :disabled="processing"
                             @click="goBack"
-                        >
-                            Cancelar
-                        </VBtn>
+                            :color="props.action == 'show' ? 'info' : 'error'"
+                            :text="props.action == 'show' ? 'Volver' : 'Cancelar'"
+                        ></VBtn>
+                        <VBtn
+                            type="submit"
+                            color="info"
+                            :loading="processing"
+                            :disabled="processing"
+                            text="Guardar"
+                            v-if="props.action !== 'show'"
+                        ></VBtn>
                     </div>
                 </VCardText>
             </Form>

@@ -32,7 +32,8 @@ class UserController extends Controller
             ->orderBy($sort, $order);
         $users = $usersQuery->paginate($limit)->withQueryString();
         return Inertia::render('Users/Index', [
-            'users' => $users,
+            'type' => 'usuario',
+            'payload' => $users,
             'filters' => $request->only(['q', 'sort', 'order', 'limit']),
         ]);
     }
@@ -47,8 +48,8 @@ class UserController extends Controller
             ->get();
 
         return Inertia::render('Users/Form', [
+            'type' => 'usuario',
             'action' => 'create',
-            'cliente' => false,
             'roles' => $roles
         ]);
     }
@@ -89,9 +90,9 @@ class UserController extends Controller
         $user->load('roles:id');
         
         return Inertia::render('Users/Form', [
-            'cliente' => false,
+            'type' => 'usuario',
             'action' => 'show',
-            'user' => [
+            'payload' => [
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
@@ -111,9 +112,9 @@ class UserController extends Controller
             ->get();
         $user->load('roles:id');
         return Inertia::render('Users/Form', [
+            'type' => 'usuario',
             'action' => 'edit',
-            'cliente' => false,
-            'user' => [
+            'payload' => [
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,

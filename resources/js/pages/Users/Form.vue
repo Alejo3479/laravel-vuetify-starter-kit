@@ -10,7 +10,7 @@ interface Role {
     id: number;
     name: string;
 }
-interface UserData {
+interface Payload {
     id: number;
     name: string;
     email: string;
@@ -18,23 +18,23 @@ interface UserData {
 }
 
 const props = defineProps<{
+    type: 'usuario' | 'cliente';
     action: 'create' | 'edit' | 'show';
     roles: Role[];
-    user?: UserData;
-    cliente: boolean;
+    payload?: Payload;
 }>();
 
 setLayoutProps({
     breadcrumbs: [
         {
-            title: props.cliente ? 'Clientes' : 'Usuarios',
-            href: props.cliente ? clientesIndex() : usersIndex(),
+            title: props.type === 'usuario' ? 'Usuarios' : 'Clientes',
+            href: props.type === 'usuario' ? usersIndex() : clientesIndex(),
         },
         {
             title:
                 props.action === 'create'
                     ? 'Nuevo'
-                    : props.user?.name ?? 'Editar',
+                    : props.payload?.name ?? 'Editar',
         },
     ],
 });
@@ -50,14 +50,14 @@ function setRole(checked: boolean | null, roleId: number) {
         : roleIds.value.filter((id) => id !== roleId);
 }
 
-const name = ref(props.user?.name ?? '');
-const email = ref(props.user?.email ?? '');
+const name = ref(props.payload?.name ?? '');
+const email = ref(props.payload?.email ?? '');
 const password = ref('');
 const passwordConfirmation = ref('');
 const roleIds = ref<number[]>(
-    props.action === 'create' && props.cliente
+    props.action === 'create' && props.type === 'usuario'
     ? props.roles.map((role) => role.id)
-    : props.user?.role_ids ?? []);
+    : props.payload?.role_ids ?? []);
 
 function goBack() {
     window.history.back();
@@ -69,28 +69,28 @@ function goBack() {
     <Head :title="props.action === 'create' ? 'Nuevo usuario' : 'Editar usuario'" />
     <div class="app-page">
         <VCard>
-            <VCardTitle>{{ props.user?.name ?? '' }}</VCardTitle>
+            <VCardTitle>{{ props.payload?.name ?? '' }}</VCardTitle>
             <Form
-                v-bind="action === 'edit' && props.user
-                    ? (props.cliente
-                        ? clientesController.update.form(props.user.id)
-                        : UserController.update.form(props.user.id)
+                v-bind="action === 'edit' && props.payload
+                    ? (props.type === 'usuario'
+                        ? UserController.update.form(props.payload.id)
+                        : clientesController.update.form(props.payload.id)
                     )
-                    : (props.cliente
-                        ? clientesController.store.form()
-                        : UserController.store.form()
+                    : (props.type === 'usuario'
+                        ? UserController.store.form()
+                        : clientesController.store.form()
                     )"
                 :transform="(data) => ({ ...data, roles: Array.isArray(data.roles) ? data.roles.map(Number) : [] })"
                 reset-on-success
                 v-slot="{ errors, processing }"
-                :key="user?.id ?? 'new'"
+                :key="props.payload?.id ?? 'new'"
             >
                 <VCardText>
                     <VTextField
                         name="name"
                         v-model="name"
                         label="Nombre"
-                        :disabled="props.action === 'show'"
+                        :readonly="props.action === 'show'"
                         variant="outlined"
                         density="compact"
                         :error-messages="errors.name"
@@ -99,7 +99,7 @@ function goBack() {
                         name="email"
                         v-model="email"
                         label="Email"
-                        :disabled="props.action === 'show'"
+                        :readonly="props.action === 'show'"
                         variant="outlined"
                         density="compact"
                         class="mt-4"
@@ -131,14 +131,13 @@ function goBack() {
                         class="mt-4"
                         :error-messages="errors.password_confirmation"
                     />
-                    <div class="mt-4">
+                    <div class="mt-4" v-if="props.type == 'usuario'">
                         <template v-for="role in roles" :key="role.id">
                             <VCheckbox
-                                v-if="!(role.name === 'Cliente' && (props.action === 'create' || props.cliente))"
                                 :label="role.name"
                                 density="compact"
                                 hide-details
-                                :disabled="props.action === 'show' || (props.cliente && props.action === 'create')"
+                                :readonly="props.action === 'show'"
                                 :model-value="roleIds.includes(role.id)"
                                 @update:model-value="(checked: boolean | null) => setRole(checked, role.id)"
                             />
@@ -151,26 +150,22 @@ function goBack() {
                             :value="id"
                         />
                     </div>
-                    <div class="d-flex flex-column flex-md-row align-md-center justify-end ga-4 mb-4">
+                    <div class="d-flex flex-column flex-md-row align-md-center justify-end ga-4 my-4">
                         <VBtn
-                            v-if="props.action !== 'show'"
-                            class="mt-4"
+                            :loading="processing"
+                            :disabled="processing"
+                            @click="goBack"
+                            :color="props.action == 'show' ? 'info' : 'error'"
+                            :text="props.action == 'show' ? 'Volver' : 'Cancelar'"
+                        ></VBtn>
+                        <VBtn
                             color="info"
                             :loading="processing"
                             type="submit"
                             :disabled="processing"
-                        >
-                            Guardar
-                        </VBtn>
-                        <VBtn
+                            text="Guardar"
                             v-if="props.action !== 'show'"
-                            class="mt-4"
-                            color="error"
-                            type="button"
-                            @click="goBack"
-                        >
-                            Cancelar
-                        </VBtn>
+                        ></VBtn>
                     </div>
                 </VCardText>
             </Form>

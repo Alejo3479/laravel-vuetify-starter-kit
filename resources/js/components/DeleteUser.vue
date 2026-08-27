@@ -71,7 +71,7 @@ const passwordInput = useTemplateRef('passwordInput');
                             }
                         "
                     >
-                        Cancel
+                        Cancelar
                     </VBtn>
                     <VBtn
                         type="submit"
@@ -80,7 +80,7 @@ const passwordInput = useTemplateRef('passwordInput');
                         :disabled="processing"
                         data-test="confirm-delete-user-button"
                     >
-                        Delete account
+                        Eliminar cuenta
                     </VBtn>
                 </VCardActions>
             </Form>

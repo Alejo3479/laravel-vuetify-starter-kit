@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
+use App\Models\Permission;
 use App\Models\PermissionGroup;
+use App\Models\Role;
+use Illuminate\Database\Seeder;
 
 class PermissionSeeder extends Seeder
 {
@@ -50,6 +52,11 @@ class PermissionSeeder extends Seeder
                     'guard_name' => $item['guard_name'],
                 ]);
             }
+        }
+
+        $role = Role::whereName('Administrador')->first();
+        if ($role) {
+            $role->permissions()->attach(Permission::get());
         }
     }
 }

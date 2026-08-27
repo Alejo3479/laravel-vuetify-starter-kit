@@ -1,25 +1,17 @@
 <script setup lang="ts">
 import { Head, router, setLayoutProps } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
-import { index as usersIndex, edit, show, destroy, create as usersCreate } from '@/routes/users';
+import { index as usersIndex, edit as userEdit, show as userShow, destroy as userDestroy, create as userCreate } from '@/routes/users';
+import { index as clientsIndex, edit as clienteEdit, show as clienteShow, destroy as clienteDestroy, create as clientesCreate } from '@/routes/clientes';
 
-setLayoutProps({
-    breadcrumbs: [
-        {
-            title: 'Usuarios',
-            href: usersIndex(),
-        },
-    ],
-});
-
-interface UserRow {
+interface ItemRow {
     id: number;
     name: string;
     email: string;
 }
 
-interface PaginatedUsers {
-    data: UserRow[];
+interface PaginatedPayload {
+    data: ItemRow[];
     current_page: number;
     per_page: number;
     total: number;
@@ -32,29 +24,39 @@ interface Filters {
     limit: number | null;
 }
 
- const props = defineProps<{
-    users: PaginatedUsers;
+const props = defineProps<{
+    type: 'usuario' | 'cliente';
+    payload: PaginatedPayload;
     filters: Filters;
 }>();
+
+setLayoutProps({
+    breadcrumbs: [
+        {
+            title: props.type === 'usuario' ? 'Usuarios' : 'Clientes',
+            href: props.type === 'usuario' ? usersIndex() : clientsIndex(),
+        },
+    ],
+});
 
 const headers = [
     { title: 'Nombre', key: 'name' },
     { title: 'Correo', key: 'email' },
-    { title: 'Acciones', key: 'actions', align: 'center' as const },
+    { title: 'Acciones', key: 'actions', sortable: false, align: 'center' as const, width: '180px' },
 ];
 
-const fetchUsers = (params: {
+const fetchData = (params: {
     page: number;
     limit: number;
     sort: string;
     order: 'asc' | 'desc';
     q: string;
 }) => {
-    router.get(usersIndex().url, params, {
+    router.get(props.type === 'usuario' ? usersIndex().url : clientsIndex().url, params, {
         preserveState: true,
         preserveScroll: true,
         replace: true,
-        only: ['users' , 'filters'],
+        only: ['payload' , 'filters'],
     });
 };
 
@@ -67,37 +69,36 @@ const onUpdateOptions = ({
     itemsPerPage: number;
     sortBy: { key: string; order: 'asc' | 'desc' }[];
 }) => {
-    fetchUsers({
-            page,
-            limit: itemsPerPage,
-            sort: sortBy[0]?.key ?? 'name',
-            order: sortBy[0]?.order ?? 'asc',
-            q: search.value ?? '',
+    fetchData({
+        page,
+        limit: itemsPerPage,
+        sort: sortBy[0]?.key ?? 'name',
+        order: sortBy[0]?.order ?? 'asc',
+        q: search.value ?? '',
     });
 };
-
 
 const search = ref<string | null>(props.filters.q ?? '');
 let searchTimeout: ReturnType<typeof setTimeout>;
 
 const confirmDialog = ref(false);
-const userToDelete = ref<UserRow | null>(null);
+const itemToDelete = ref<ItemRow | null>(null);
 
-const askDelete = (user: UserRow) => {
-    userToDelete.value = user;
+const askDelete = (user: ItemRow) => {
+    itemToDelete.value = user;
     confirmDialog.value = true;
 };
 
 const confirmDelete = () => {
-    if (!userToDelete.value) {
+    if (!itemToDelete.value) {
         return;
     }
 
-    router.delete(destroy(userToDelete.value.id).url, {
+    router.delete(props.type === 'usuario' ? userDestroy(itemToDelete.value.id).url : clienteDestroy(itemToDelete.value.id).url, {
         preserveScroll: true,
         onFinish: () => {
             confirmDialog.value = false;
-            userToDelete.value = null;
+            itemToDelete.value = null;
         },
     });
 };
@@ -105,7 +106,7 @@ const confirmDelete = () => {
 watch(search, (value) => {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(() => {
-        fetchUsers({
+        fetchData({
             page: 1,
             limit: props.filters.limit ?? 10,
             sort: props.filters.sort ?? 'name',
@@ -139,7 +140,7 @@ watch(search, (value) => {
                         class="order-1 order-md-2 w-100 w-md-auto"
                         color="primary"
                         prepend-icon="mdi-plus"
-                        :href="usersCreate().url"
+                        :href="props.type === 'usuario' ? userCreate().url : clientesCreate().url"
                     >
                         Nuevo
                     </VBtn>
@@ -147,76 +148,76 @@ watch(search, (value) => {
                 <VDataTableServer
                     density="compact"
                     :headers="headers"
-                    :items="users.data"
-                    :items-length="users.total"
-                    :items-per-page="users.per_page"
+                    :items="payload.data"
+                    :items-length="payload.total"
+                    :items-per-page="payload.per_page"
                     :items-per-page-options="[
                         { value: 10, title: '10' },
                         { value: 25, title: '25' },
                         { value: 50, title: '50' },
                     ]"
-                    :page="users.current_page"
+                    :page="payload.current_page"
                     item-value="id"
                     @update:options="onUpdateOptions"
                 >
-                <template #headers="{ columns }">
-                    <tr>
-                        <th
-                            v-for="column in columns"
-                            :key="column.key ?? column.title"
-                            class="font-weight-bold"
-                            :class="{ 'text-center': column.key === 'actions' }"
+                    <template #headers="{ columns }">
+                        <tr>
+                            <th
+                                v-for="column in columns"
+                                :key="column.key ?? column.title"
+                                class="font-weight-bold"
+                                :class="{ 'text-center': column.key === 'actions' }"
+                            >
+                                {{ column.title }}
+                            </th>
+                        </tr>
+                    </template>
+                    <template v-slot:[`item.actions`]="{ item }">
+                        <VBtn
+                            icon="mdi-eye-outline"
+                            variant="text"
+                            size="small"
+                            @click="router.visit(props.type === 'usuario' ? userShow(item.id).url : clienteShow(item.id).url)"
                         >
-                            {{ column.title }}
-                        </th>
-                    </tr>
-                </template>
-                <template v-slot:[`item.actions`]="{ item }">
-                    <VBtn
-                        icon="mdi-eye-outline"
-                        variant="text"
-                        size="small"
-                        @click="router.visit(show(item.id).url)"
-                    >
-                        <VIcon icon="mdi-eye-outline" />
-                        <VTooltip activator="parent" location="top">Ver</VTooltip>
-                    </VBtn>
-                    <VBtn
-                        icon="mdi-pencil-outline"
-                        variant="text"
-                        size="small"
-                        @click="router.visit(edit(item.id).url)"
-                    >
-                        <VIcon icon="mdi-pencil-outline" />
-                        <VTooltip activator="parent" location="top">Editar</VTooltip>
-                    </VBtn>
-                    <VBtn
-                        icon="mdi-trash-can-outline"
-                        variant="text"
-                        size="small"
-                        color="error"
-                        @click="askDelete(item)"
-                    >
-                        <VIcon icon="mdi-trash-can-outline" />
-                        <VTooltip activator="parent" location="top">Eliminar</VTooltip>
-                    </VBtn>
-                </template>
+                            <VIcon icon="mdi-eye-outline" />
+                            <VTooltip activator="parent" location="top">Ver</VTooltip>
+                        </VBtn>
+                        <VBtn
+                            icon="mdi-pencil-outline"
+                            variant="text"
+                            size="small"
+                            @click="router.visit(props.type === 'usuario' ? userEdit(item.id).url : clienteEdit(item.id).url)"
+                        >
+                            <VIcon icon="mdi-pencil-outline" />
+                            <VTooltip activator="parent" location="top">Editar</VTooltip>
+                        </VBtn>
+                        <VBtn
+                            icon="mdi-trash-can-outline"
+                            variant="text"
+                            size="small"
+                            color="error"
+                            @click="askDelete(item)"
+                        >
+                            <VIcon icon="mdi-trash-can-outline" />
+                            <VTooltip activator="parent" location="top">Eliminar</VTooltip>
+                        </VBtn>
+                    </template>
                 </VDataTableServer>
                 <VDialog v-model="confirmDialog" max-width="420">
-                        <VCard>
-                            <VCardTitle>Eliminar usuario</VCardTitle>
-                            <VCardText>
-                                ¿Seguro que querés eliminar el usuario
-                                <strong>{{ userToDelete?.name }}</strong>? Esta acción no
-                                se puede deshacer.
-                            </VCardText>
-                            <VCardActions>
-                                <VSpacer />
-                                <VBtn variant="text" @click="confirmDialog = false">Cancelar</VBtn>
-                                <VBtn color="error" variant="flat" @click="confirmDelete">Eliminar</VBtn>
-                            </VCardActions>
-                        </VCard>
-                    </VDialog>
+                    <VCard>
+                        <VCardTitle>Eliminar usuario</VCardTitle>
+                        <VCardText>
+                            ¿Seguro que querés eliminar el usuario
+                            <strong>{{ itemToDelete?.name }}</strong>? Esta acción no
+                            se puede deshacer.
+                        </VCardText>
+                        <VCardActions>
+                            <VSpacer />
+                            <VBtn variant="text" @click="confirmDialog = false">Cancelar</VBtn>
+                            <VBtn color="error" variant="flat" @click="confirmDelete">Eliminar</VBtn>
+                        </VCardActions>
+                    </VCard>
+                </VDialog>
             </VCardText>
         </VCard>
     </div>

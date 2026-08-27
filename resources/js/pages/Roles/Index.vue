@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, router, setLayoutProps } from '@inertiajs/vue3';
-import { ref, watch, computed } from 'vue';
+import { ref, watch } from 'vue';
 import { index as rolesIndex, edit, show, destroy, create as rolesCreate } from '@/routes/roles';
 
 setLayoutProps({
@@ -11,29 +11,14 @@ setLayoutProps({
         },
     ],
 });
-interface RoleData {
-    id: number;
-    name: string;
-    permission_ids: number[];
-}
 
-interface Permission {
+interface ItemRow {
     id: number;
     name: string;
 }
 
-interface PermissionGroup {
-    id: number;
-    permissions: Permission[];
-}
-
-interface RoleRow {
-    id: number;
-    name: string;
-}
-
-interface PaginatedRoles {
-    data: RoleRow[];
+interface PaginatedPayload {
+    data: ItemRow[];
     current_page: number;
     per_page: number;
     total: number;
@@ -47,26 +32,16 @@ interface Filters {
 }
 
 const props = defineProps<{
-    roles?: PaginatedRoles;
+    payload?: PaginatedPayload;
     filters?: Filters;
-    action?: 'show' | 'index' | 'create' | 'edit';
-    role?: RoleData;
-    permissionGroups?: PermissionGroup[];
 }>();
-
-const permissionNames = computed(() =>
-    (props.permissionGroups ?? [])
-        .flatMap((group) => group.permissions)
-        .filter((permission) => props.role?.permission_ids.includes(permission.id))
-        .map((permission) => permission.name)
-);
 
 const headers = [
     { title: 'Nombre', key: 'name' },
-    { title: 'Acciones', key: 'actions', sortable: false, align: 'center' as const, width: '250px' },
+    { title: 'Acciones', key: 'actions', sortable: false, align: 'center' as const, width: '180px' },
 ];
 
-const fetchRoles = (params: {
+const fetchData = (params: {
     page: number;
     limit: number;
     sort: string;
@@ -77,7 +52,7 @@ const fetchRoles = (params: {
         preserveState: true,
         preserveScroll: true,
         replace: true,
-        only: ['roles', 'filters'],
+        only: ['payload', 'filters'],
     });
 };
 
@@ -90,22 +65,22 @@ const onUpdateOptions = ({
     itemsPerPage: number;
     sortBy: { key: string; order: 'asc' | 'desc' }[];
 }) => {
-        fetchRoles({
-            page,
-            limit: itemsPerPage,
-            sort: sortBy[0]?.key ?? 'name',
-            order: sortBy[0]?.order ?? 'asc',
-            q: search.value ?? '',
-        });
+    fetchData({
+        page,
+        limit: itemsPerPage,
+        sort: sortBy[0]?.key ?? 'name',
+        order: sortBy[0]?.order ?? 'asc',
+        q: search.value ?? '',
+    });
 };
 
 const search = ref<string | null>(props.filters?.q ?? '');
 let searchTimeout: ReturnType<typeof setTimeout>;
 
 const confirmDialog = ref(false);
-const roleToDelete = ref<RoleRow | null>(null);
+const roleToDelete = ref<ItemRow | null>(null);
 
-const askDelete = (role: RoleRow) => {
+const askDelete = (role: ItemRow) => {
     roleToDelete.value = role;
     confirmDialog.value = true;
 };
@@ -127,7 +102,7 @@ const confirmDelete = () => {
 watch(search, (value) => {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(() => {
-        fetchRoles({
+        fetchData({
             page: 1,
             limit: props.filters?.limit ?? 10,
             sort: props.filters?.sort ?? 'name',
@@ -142,46 +117,44 @@ watch(search, (value) => {
     <Head title="Roles" />
 
     <div class="app-page">
-        <VCard v-if="props.action !== 'show'">
-        <VCardText>
-            <div class="d-flex flex-column flex-md-row align-md-center ga-4 mb-4">
-                <VTextField
-                    v-model="search"
-                    label="Buscar por nombre"
-                    prepend-inner-icon="mdi-magnify"
-                    placeholder="Administrador"
-                    density="compact"
-                    variant="outlined"
-                    clearable
-                    hide-details
-                    class="order-2 order-md-1 grow"
-                />
-                <VBtn
-                    class="order-1 order-md-2 w-100 w-md-auto"
-                    color="primary"
-                    prepend-icon="mdi-plus"
-                    :href="rolesCreate().url"
-                >
-                    Nuevo
-                </VBtn>
-            </div>
-
-
+        <VCard>
+            <VCardText>
+                <div class="d-flex flex-column flex-md-row align-md-center ga-4 mb-4">
+                    <VTextField
+                        v-model="search"
+                        label="Buscar por nombre"
+                        prepend-inner-icon="mdi-magnify"
+                        placeholder="Administrador"
+                        density="compact"
+                        variant="outlined"
+                        clearable
+                        hide-details
+                        class="order-2 order-md-1 grow"
+                    />
+                    <VBtn
+                        class="order-1 order-md-2 w-100 w-md-auto"
+                        color="primary"
+                        prepend-icon="mdi-plus"
+                        :href="rolesCreate().url"
+                    >
+                        Nuevo
+                    </VBtn>
+                </div>
                 <VDataTableServer
                     density="compact"
                     :headers="headers"
-                    :items="roles?.data ?? []"
-                    :items-length="roles?.total ?? 0"
-                    :items-per-page="roles?.per_page"
+                    :items="payload?.data ?? []"
+                    :items-length="payload?.total ?? 0"
+                    :items-per-page="payload?.per_page"
                     :items-per-page-options="[
                         { value: 10, title: '10' },
                         { value: 25, title: '25' },
                         { value: 50, title: '50' },
                     ]"
-                    :page="roles?.current_page"
+                    :page="payload?.current_page"
                     item-value="id"
                     @update:options="onUpdateOptions"
-                    >
+                >
                     <template #headers="{ columns }">
                         <tr>
                             <th
@@ -196,19 +169,19 @@ watch(search, (value) => {
                     </template>
                     <template v-slot:[`item.actions`]="{ item }">
                         <VBtn
-                        icon="mdi-eye-outline"
-                        variant="text"
-                        size="small"
-                        @click="router.visit(show(item.id).url)"
+                            icon="mdi-eye-outline"
+                            variant="text"
+                            size="small"
+                            @click="router.visit(show(item.id).url)"
                         >
                             <VIcon icon="mdi-eye-outline" />
                             <VTooltip activator="parent" location="top">Ver</VTooltip>
                         </VBtn>
                         <VBtn
-                        icon="mdi-pencil-outline"
-                        variant="text"
-                        size="small"
-                        @click="router.visit(edit(item.id).url)"
+                            icon="mdi-pencil-outline"
+                            variant="text"
+                            size="small"
+                            @click="router.visit(edit(item.id).url)"
                         >
                             <VIcon icon="mdi-pencil-outline" />
                             <VTooltip activator="parent" location="top">Editar</VTooltip>
@@ -223,33 +196,23 @@ watch(search, (value) => {
                             <VIcon icon="mdi-trash-can-outline" />
                             <VTooltip activator="parent" location="top">Eliminar</VTooltip>
                         </VBtn>
-                        </template>
-                    </VDataTableServer>
-                    <VDialog v-model="confirmDialog" max-width="420">
-                        <VCard>
-                            <VCardTitle>Eliminar rol</VCardTitle>
-                            <VCardText>
-                                ¿Seguro que querés eliminar el rol
-                                <strong>{{ roleToDelete?.name }}</strong>? Esta acción no
-                                se puede deshacer.
-                            </VCardText>
-                            <VCardActions>
-                                <VSpacer />
-                                <VBtn variant="text" @click="confirmDialog = false">Cancelar</VBtn>
-                                <VBtn color="error" variant="flat" @click="confirmDelete">Eliminar</VBtn>
-                            </VCardActions>
-                        </VCard>
-                    </VDialog>
-            </VCardText>
-        </VCard>
-        <VCard v-else-if="props.role">
-            <VCardTitle>{{ props.role.name }}</VCardTitle>
-            <VDivider />
-            <VCardText>
-                <p class="text-body-2 mb-2">Permisos:</p>
-                <ul>
-                    <li v-for="name in permissionNames" :key="name">{{ name }}</li>
-                </ul>
+                    </template>
+                </VDataTableServer>
+                <VDialog v-model="confirmDialog" max-width="420">
+                    <VCard>
+                        <VCardTitle>Eliminar rol</VCardTitle>
+                        <VCardText>
+                            ¿Seguro que querés eliminar el rol
+                            <strong>{{ roleToDelete?.name }}</strong>? Esta acción no
+                            se puede deshacer.
+                        </VCardText>
+                        <VCardActions>
+                            <VSpacer />
+                            <VBtn variant="text" @click="confirmDialog = false">Cancelar</VBtn>
+                            <VBtn color="error" variant="flat" @click="confirmDelete">Eliminar</VBtn>
+                        </VCardActions>
+                    </VCard>
+                </VDialog>
             </VCardText>
         </VCard>
     </div>

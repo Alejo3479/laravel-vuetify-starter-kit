@@ -32,8 +32,9 @@ class ClienteController extends Controller
             ->orderBy($sort, $order);
     
         $clientes = $clientesQuery->paginate($limit)->withQueryString();
-        return Inertia::render('Clientes/Index', [
-            'clientes' => $clientes,
+        return Inertia::render('Users/Index', [
+            'type' => 'cliente',
+            'payload' => $clientes,
             'filters' => $request->only(['q', 'sort', 'order', 'limit']),
         ]);
     }
@@ -47,8 +48,8 @@ class ClienteController extends Controller
         $roles = Role::select(['id', 'name'])->where('name', 'Cliente')->orderBy('name', 'asc')->get();
 
         return Inertia::render('Users/Form', [
+            'type' => 'cliente',
             'action' => 'create',
-            'cliente' => true,
             'roles' => $roles
         ]);
     }
@@ -69,7 +70,7 @@ class ClienteController extends Controller
             }
             $message = sprintf('Cliente  "%s" registrado exitosamente.', $cliente ->name);
             Inertia::flash('toast', ['type' => 'success', 'message' => $message]);
-            return to_route('clientes.index');
+            return redirect()->back();
 
         } catch (\Exception $e) {
             $message = sprintf('Hubo un error al intentar crear el cliente: %s', $e->getMessage());
@@ -87,9 +88,9 @@ class ClienteController extends Controller
         $cliente->load('roles:id');
 
         return Inertia::render('Users/Form', [
+            'type' => 'cliente',
             'action' => 'show',
-            'cliente' => true,
-            'user' => [
+            'payload' => [
                 'id' => $cliente->id,
                 'name' => $cliente->name,
                 'email' => $cliente->email,
@@ -108,9 +109,9 @@ class ClienteController extends Controller
         $cliente->load('roles:id');
 
         return Inertia::render('Users/Form', [
+            'type' => 'cliente',
             'action' => 'edit',
-            'cliente' => true,
-            'user' => [
+            'payload' => [
                 'id' => $cliente->id,
                 'name' => $cliente->name,
                 'email' => $cliente->email,
@@ -138,7 +139,7 @@ class ClienteController extends Controller
             $message = sprintf('Cliente "%s" actualizado exitosamente.', $cliente->name);
 
             Inertia::flash('toast', ['type' => 'success', 'message' => $message]);
-            return to_route('clientes.index');
+            return redirect()->back();
 
         } catch (\Exception $e) {
             $message = sprintf('Hubo un error al actualizar el cliente: %s', $e->getMessage());

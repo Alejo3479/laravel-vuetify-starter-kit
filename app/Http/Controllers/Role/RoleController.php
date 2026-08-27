@@ -7,7 +7,6 @@ use App\Http\Requests\Role\StoreRoleRequest;
 use App\Http\Requests\Role\UpdateRoleRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use App\Models\Permission;
 use App\Models\Role;
 use App\Models\PermissionGroup;
 
@@ -33,7 +32,7 @@ class RoleController extends Controller
         $roles = $rolesQuery->paginate($limit)->withQueryString();
 
         return Inertia::render('Roles/Index', [
-            'roles' => $roles,
+            'payload' => $roles,
             'filters' => $request->only(['q', 'sort', 'order', 'limit']),
         ]);
     }
@@ -95,9 +94,9 @@ class RoleController extends Controller
         // cargar ids de los permisos que el rol ya tiene asignados
         $role->load('permissions:id');
 
-        return Inertia::render('Roles/Index', [
+        return Inertia::render('Roles/Form', [
             'action' => 'show',
-            'role' => [
+            'payload' => [
                 'id' => $role->id,
                 'name' => $role->name,
                 'permission_ids' => $role->permissions->pluck('id')->toArray(),
@@ -123,7 +122,7 @@ class RoleController extends Controller
 
         return Inertia::render('Roles/Form', [
             'action' => 'edit',
-            'role' => [
+            'payload' => [
                 'id' => $role->id,
                 'name' => $role->name,
                 'permission_ids' => $role->permissions->pluck('id')->toArray(),
