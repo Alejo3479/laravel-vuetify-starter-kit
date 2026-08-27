@@ -2,6 +2,7 @@
 import { Head, router, setLayoutProps } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
 import { index as rolesIndex, edit, show, destroy, create as rolesCreate } from '@/routes/roles';
+import type { PaginatedPayload, Filters, FetchDataParams, TableOptions } from '@/types/paginacion';
 
 setLayoutProps({
     breadcrumbs: [
@@ -17,22 +18,22 @@ interface ItemRow {
     name: string;
 }
 
-interface PaginatedPayload {
-    data: ItemRow[];
-    current_page: number;
-    per_page: number;
-    total: number;
-}
+// interface PaginatedPayload {
+//     data: ItemRow[];
+//     current_page: number;
+//     per_page: number;
+//     total: number;
+// }
 
-interface Filters {
-    q: string | null;
-    sort: string | null;
-    order: 'asc' | 'desc' | null;
-    limit: number | null;
-}
+// interface Filters {
+//     q: string | null;
+//     sort: string | null;
+//     order: 'asc' | 'desc' | null;
+//     limit: number | null;
+// }
 
 const props = defineProps<{
-    payload?: PaginatedPayload;
+    payload?: PaginatedPayload<ItemRow>;
     filters?: Filters;
 }>();
 
@@ -41,13 +42,7 @@ const headers = [
     { title: 'Acciones', key: 'actions', sortable: false, align: 'center' as const, width: '180px' },
 ];
 
-const fetchData = (params: {
-    page: number;
-    limit: number;
-    sort: string;
-    order: 'asc' | 'desc';
-    q: string;
-}) => {
+const fetchData = (params: FetchDataParams) => {
     router.get(rolesIndex().url, params, {
         preserveState: true,
         preserveScroll: true,
@@ -60,11 +55,7 @@ const onUpdateOptions = ({
     page,
     itemsPerPage,
     sortBy,
-}: {
-    page: number;
-    itemsPerPage: number;
-    sortBy: { key: string; order: 'asc' | 'desc' }[];
-}) => {
+}: TableOptions) => {
     fetchData({
         page,
         limit: itemsPerPage,
