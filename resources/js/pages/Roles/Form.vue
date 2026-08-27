@@ -52,6 +52,9 @@ const selectedGroup = ref(props.permissionGroups[0]?.id ?? null);
 const name = ref(props.role?.name ?? '');
 const permissionIds = ref<number[]>(props.role?.permission_ids ?? []);
 
+function goBack() {
+    window.history.back();
+}
 </script>
 
 <template>
@@ -115,15 +118,27 @@ const permissionIds = ref<number[]>(props.role?.permission_ids ?? []);
                             :value="id"
                         />
                     </div>
-                    <VBtn
-                        type="submit"
-                        class="mt-4"
-                        color="primary"
-                        :loading="processing"
-                        :disabled="processing"
-                    >
-                        Guardar
-                    </VBtn>
+                    <div class="d-flex flex-column flex-md-row align-md-center justify-end ga-4 mb-4">
+                        <VBtn
+                            type="submit"
+                            class="mt-4"
+                            color="info"
+                            :loading="processing"
+                            :disabled="processing"
+                        >
+                            Guardar
+                        </VBtn>
+                        <VBtn
+                            type="submit"
+                            class="mt-4"
+                            color="error"
+                            :loading="processing"
+                            :disabled="processing"
+                            @click="goBack"
+                        >
+                            Cancelar
+                        </VBtn>
+                    </div>
                 </VCardText>
             </Form>
         </VCard>
