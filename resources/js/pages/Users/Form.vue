@@ -6,6 +6,8 @@ import UserController from '@/actions/App/Http/Controllers/User/UserController';
 import { index as clientesIndex } from '@/routes/clientes';
 import { index as usersIndex } from '@/routes/users';
 
+import type { BaseFormProps } from '@/types/paginacion';
+
 interface Role {
     id: number;
     name: string;
@@ -17,11 +19,9 @@ interface Payload {
     role_ids: number[];
 }
 
-const props = defineProps<{
+const props = defineProps<BaseFormProps<Payload> & {
     type: 'usuario' | 'cliente';
-    action: 'create' | 'edit' | 'show';
     roles: Role[];
-    payload?: Payload;
 }>();
 
 setLayoutProps({

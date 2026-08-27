@@ -1,3 +1,4 @@
+// Interfaces para Index
 export interface PaginatedPayload<T> {
     data: T[];
     current_page: number;
@@ -25,4 +26,13 @@ export interface TableOptions {
     page: number;
     itemsPerPage: number;
     sortBy: { key: string; order: 'asc' | 'desc' }[];
+}
+
+// Interfaces para Form
+
+export type FormAction = 'create' | 'edit' | 'show';
+
+export interface BaseFormProps<TPayload> {
+    action: FormAction;
+    payload?:TPayload
 }

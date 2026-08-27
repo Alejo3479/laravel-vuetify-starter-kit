@@ -3,6 +3,7 @@ import { Head, Form, setLayoutProps } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import RoleController from '@/actions/App/Http/Controllers/Role/RoleController';
 import { index as rolesIndex } from '@/routes/roles';
+import type { BaseFormProps } from '@/types/paginacion';
 
 interface Payload {
     id: number;
@@ -22,10 +23,8 @@ interface PermissionGroup {
     permissions: Permission[];
 }
 
-const props = defineProps<{
-    action: 'create' | 'edit' | 'show';
+const props = defineProps<BaseFormProps<Payload> & {
     permissionGroups: PermissionGroup[];
-    payload?: Payload;
 }>();
 
 setLayoutProps({
