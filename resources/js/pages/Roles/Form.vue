@@ -13,7 +13,7 @@ interface Payload {
 interface Permission {
     id: number;
     name: string;
-    permission_group_id: number;
+    label: string;
 }
 
 interface PermissionGroup {
@@ -35,10 +35,7 @@ setLayoutProps({
             href: rolesIndex(),
         },
         {
-            title:
-                props.action === 'create'
-                    ? 'Nuevo'
-                    : props.payload?.name ?? 'Editar',
+            title: props.action === 'create' ? 'Nuevo' : (props.action === 'edit' ? 'Editar' : 'Ver'),
         },
     ],
 });
@@ -58,11 +55,9 @@ function goBack() {
 </script>
 
 <template>
-    <Head :title="props.action === 'create' ? 'Nuevo rol' : 'Editar rol'" />
+    <Head :title="props.action === 'create' ? 'Nuevo rol' : (props.action === 'edit' ? `Editar rol` : `Ver rol`)" />
     <div class="app-page">
         <VCard>
-            <VCardTitle>{{ props.action === 'create' ? 'Nuevo rol' : 'Editar rol' }}</VCardTitle>
-            <VDivider />
             <Form
                 v-bind="action === 'edit' && props.payload ? RoleController.update.form(props.payload.id) : RoleController.store.form()"
                 :options="{ preserveScroll: true }"
@@ -103,7 +98,7 @@ function goBack() {
                                 <VCheckbox
                                     v-for="permission in group.permissions"
                                     :key="permission.id"
-                                    :label="permission.name"
+                                    :label="permission.label"
                                     density="compact"
                                     hide-details
                                     :model-value="permissionIds.includes(permission.id)"

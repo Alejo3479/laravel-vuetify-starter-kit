@@ -44,10 +44,10 @@ class RoleController extends Controller
     {
         $permissionGroups = PermissionGroup::select(['id', 'name'])
             ->with(['permissions' => function ($query) {
-                $query->select(['id', 'name', 'permission_group_id'])
-                    ->orderBy('name', 'asc');
+                $query->select(['id', 'name', 'label', 'permission_group_id'])
+                    ->orderBy('id');
             }])
-            ->orderBy('name', 'asc')
+            ->orderBy('id')
             ->get();
 
         return Inertia::render('Roles/Form', [
@@ -85,10 +85,10 @@ class RoleController extends Controller
     {
         $permissionGroups = PermissionGroup::select(['id', 'name'])
             ->with(['permissions' => function ($query) {
-                $query->select(['id', 'name', 'permission_group_id'])
-                    ->orderBy('name', 'asc');
+                $query->select(['id', 'name', 'label', 'permission_group_id'])
+                    ->orderBy('id');
             }])
-            ->orderBy('name', 'asc')
+            ->orderBy('id')
             ->get();
 
         // cargar ids de los permisos que el rol ya tiene asignados
@@ -112,10 +112,10 @@ class RoleController extends Controller
     {
         $permissionGroups = PermissionGroup::select(['id', 'name'])
             ->with(['permissions' => function ($query) {
-                $query->select(['id', 'name', 'permission_group_id'])
-                    ->orderBy('name', 'asc');
+                $query->select(['id', 'name', 'label', 'permission_group_id'])
+                    ->orderBy('id');
             }])
-            ->orderBy('name', 'asc')
+            ->orderBy('id')
             ->get();
         // cargar ids de los permisos que el rol ya tiene asignados
         $role->load('permissions:id');

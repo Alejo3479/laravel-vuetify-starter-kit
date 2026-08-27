@@ -31,10 +31,7 @@ setLayoutProps({
             href: props.type === 'usuario' ? usersIndex() : clientesIndex(),
         },
         {
-            title:
-                props.action === 'create'
-                    ? 'Nuevo'
-                    : props.payload?.name ?? 'Editar',
+            title: props.action === 'create' ? 'Nuevo' : (props.action === 'edit' ? 'Editar' : 'Ver'),
         },
     ],
 });
@@ -66,10 +63,9 @@ function goBack() {
 </script>
 
 <template>
-    <Head :title="props.action === 'create' ? 'Nuevo usuario' : 'Editar usuario'" />
+    <Head :title="props.action === 'create' ? 'Nuevo usuario' : (props.action === 'edit' ? `Editar usuario` : `Ver usuario`)" />
     <div class="app-page">
         <VCard>
-            <VCardTitle>{{ props.payload?.name ?? '' }}</VCardTitle>
             <Form
                 v-bind="action === 'edit' && props.payload
                     ? (props.type === 'usuario'
