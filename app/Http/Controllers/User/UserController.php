@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\User\LoginRequest;
+use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
@@ -172,5 +174,29 @@ class UserController extends Controller
             Inertia::flash('toast', ['type' => 'error','message' => $message]);
             return redirect()->back();
         }
+    }
+
+    public function generateApiToken(LoginRequest $request): JsonResponse
+    {
+        
+        if (!Auth::attempt($request->only('email', 'password'))) {
+            return response()->json([
+                'message' => 'Las credenciales proporcionadas son incorrectas.'
+            ], 401);
+        }
+
+        $user = Auth::user();
+        $user = User::find($user->id);
+        if (!$user->hasRole('Cliente')) {
+            return response()->json([
+                'message' => 'No autorizado' 
+            ], 403); 
+        }
+
+        $token = $user->createToken('api-token', ['*'])->plainTextToken;
+        return response()->json([
+            'token' => $token,
+            'token_type' => 'Bearer'
+        ], 200);
     }
 }
